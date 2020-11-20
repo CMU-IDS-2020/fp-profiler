@@ -6,12 +6,13 @@ import numpy as np
 st.title("Let's do some performance analysis!")
 
 from prof_file_util import load_line_profile
+from linewise_visualize import code_line_visualize
 
 with open('demo.c') as f:
     st.code(f.read(), language='c')
 
 df = load_line_profile('demo.c', 'linewise_file')
-st.write(df)
+# st.write(df)
 
 func_time = df.groupby('Func')['Time'].sum().reset_index()
 func_time = func_time[func_time['Func'] != '<not sampled>'].sort_values('Time')
@@ -33,10 +34,12 @@ line_time_bar = alt.Chart(df).mark_bar().encode(
     func_selector
 )
 
-chart = alt.hconcat(
+chart = alt.vconcat(
     func_time_bar,
     line_time_bar,
 )
 
-st.write(chart)
+st.markdown('# C Program Function and Line Profiling')
+chart_1 = code_line_visualize(df)
+st.write((chart | chart_1).configure_view(strokeOpacity=0))
 

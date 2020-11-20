@@ -3,9 +3,9 @@ import streamlit as st
 import altair as alt
 import pandas as pd
 
-line_width = 30.0
+line_width = 20.0
 
-code_panel_width = 600.0
+code_panel_width = 500.0
 
 def code_line_visualize(df):
     '''
@@ -18,12 +18,13 @@ def code_line_visualize(df):
     '''
     df['Y'] = (len(df) - df['Line Number']) * line_width
     df['X'] = code_panel_width
-    df['X2'] = line_width
+    df['X2'] = 0.0
+    df['Source'] = df['Line Number'].astype(str) + '\t\t' + df['Source']
     rect_plot = alt.Chart(df).mark_bar(color=alt.Value('red')).encode(
         alt.X('X:Q', axis=None),
         alt.Y('Line Number:O', axis=None),
-        alt.Opacity('Time %:Q', legend=None, scale=alt.Scale(type='linear',\
-            domain=list(range(100)), range=list(range(100)))),
+        alt.Opacity('Time %:Q', scale=alt.Scale(type='log',\
+            domain=(1, 100), range=(0,1))),
         tooltip=[
             alt.Tooltip('Time %', title='Time Percentage'),
             alt.Tooltip('Time', title='Time Usage')
@@ -42,7 +43,8 @@ def code_line_visualize(df):
     ).properties(width=code_panel_width,\
         height=line_width * len(df))
 
-    st.write(alt.layer(rect_plot, text_plot).configure_view(strokeOpacity=0))
+    # st.write(alt.layer(rect_plot, text_plot).configure_view(strokeOpacity=0))
+    return alt.layer(rect_plot, text_plot)
 
 if __name__ == "__main__":
     st.markdown('# Demo Line by Line CPU Usage')
