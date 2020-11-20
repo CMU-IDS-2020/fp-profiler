@@ -256,7 +256,10 @@ def generate_js_input(total_edge, index_to_func, outfile_edge, outfile_node):
     return json_node, json_edge
 
 def generate_html(sample_html, demo_html, nodes, edges):
-
+    # generate html by filling 
+    # "myDiagram.model = new go.GraphLinksModel()" 
+    # in the sample_html
+    
     with open(sample_html, 'r') as f:
         sample = f.readlines()
     
@@ -268,13 +271,11 @@ def generate_html(sample_html, demo_html, nodes, edges):
     with open(demo_html, 'w') as f:
         f.write(instance)
 
-
-    
- 
+# Modify the arguments to call
 call_graph_path = 'data/graph_file'
 outfile_edge = 'data/graph_edge.json'
 outfile_node = 'data/graph_node.json'
-sample_html = 'pageFlowSample_2.html'
+sample_html = 'pageFlowSample.html'
 run_html = 'demo.html'
 
 total_edge, index_to_func, func_to_index = extract(call_graph_path)
