@@ -7,6 +7,9 @@ st.title("Let's do some performance analysis!")
 
 from prof_file_util import load_line_profile
 
+with open('demo.c') as f:
+    st.code(f.read(), language='c')
+
 df = load_line_profile('demo.c', 'linewise_file')
 st.write(df)
 
