@@ -1,9 +1,17 @@
 # Final Project Proposal
 
-**GitHub Repo URL**: TODO
+**GitHub Repo URL**: https://github.com/CMU-IDS-2020/fp-profiler
 
-A short summary (3-4 paragraphs, about one page) of the data science problem you are addressing and what your solution will address. Feel free to include a figure or sketch to illustrate your project.
+When you are writing a program, you must want your program to run with high efficiency and low cost. If it does not live up to your expectations, you may want to check your code and find the possible improvement. But, where to start?
 
-You can use the "The Heilmeier Catechism" to evaluate your project idea. Please also list which track you choose for your project.
+Profiling has long been an important way for experienced programmers to find the performance bottlenecks for a program so that they can optimize their code. There have been some effective tools to visualize the CPU utilization of a program. However, one central problem with the existing program profiler tools is that they are relatively heavy and complex tools, which could be convenient for experienced programmers, but not for beginners. For instance, gprof (a GNU profiler for C) generates text-format files as its profiling outputs, which are not very intuitive.
 
-Then one member of your group should submit a PDF of your proposal to Canvas.
+Although it is challenging for beginner programmers to learn how to use program profilers and interpret their outputs, the visualization for their programs could have great benefits for improving program performance, facilitating learning and enhancing programming skills. The profiling result can help them learn which part of the program is the bottleneck, and the call graphs from the profiling result can also serve for teaching or presentation purposes.
+
+Therefore, in this project, we hope to build an user-friendly performance analysis tool for some of the main programming languages. This web application will provide an effective and interactive visualization and thus enable the user to easily understand the program's structure and find the bottleneck part in their code. We also expect our application to help with teaching and presentation. The tool would perform an end-to-end job, taking only the source code as input and providing interactive visualization of profiling results on-the-fly. Since existing profilers generate complete traces and call graphs, we would focus on building the tool interfaces based on them, treating the traces and source codes as data.
+
+We would like to start with exploring the following possible improvements for the visualization of program performance.
+* We found that industrial program profilers are powerful in terms of functionality, however first-time users may find them hard to start with. We would like to provide simple guidance for beginners through highlighting the most useful features.
+* Instead of asking users to go through the entire profiling data, we can provide an analysis panel upon the profiling data so that it can answer many commonly asked questions from users directly, such as where the slowest part of a program is, and which function is the most frequently called function. Users can interact with our user interface if they want to learn those issues in more detail.
+* The visualization design aims to clearly guide beginner programmers in debugging their codes. We would come up with a few here yet these may not be the final decisions. First of all, the line-wise profiling statistics will be shown together with the source code lines, supporting detailed tooltips, CPU hotspot querying and sorting. If the user seeks further detail, a hierarchical visualization of the call graph can be shown with multiple available views. Intuitive coordinations between the source code lines and the procedures in the call graph, and users may click through the calling stack to track down the logic flow of code portions that they are most interested in.
+Likewise, we may extend the profiling data analysis to Memory, which can show line-wise attribution of memory allocation, interacting with the memory usage plot, which helps track memory usage and memory leaks.
