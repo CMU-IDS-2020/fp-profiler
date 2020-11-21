@@ -4,7 +4,7 @@
 * **Team members**:
   * Contact person: TODO@andrew.cmu.edu
   * weiyizha@andrew.cmu.edu
-  * TODO@andrew.cmu.edu
+  * lichenj@andrew.cmu.edu
   * yijiez2@andrew.cmu.edu
 * **Track**: Interactive Visualization/Application (one of Narrative, Model, or Interactive Visualization/Application)
 
