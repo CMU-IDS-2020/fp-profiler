@@ -1,0 +1,571 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v4.8.1.json",
+  "config": {
+    "view": {
+      "continuousHeight": 300,
+      "continuousWidth": 400,
+      "strokeOpacity": 0
+    }
+  },
+  "datasets": {
+    "data-8b712526eec9c16f11e72c8f871a3121": [
+      {
+        "Func": "<not sampled>",
+        "Line Number": 1,
+        "Source": "1\t\t#define SCALE 1024\n",
+        "Time": 0.0,
+        "Time %": 0.0,
+        "X": 500.0,
+        "X2": 0.0,
+        "Y": 760.0
+      },
+      {
+        "Func": "<not sampled>",
+        "Line Number": 2,
+        "Source": "2\t\t\n",
+        "Time": 0.0,
+        "Time %": 0.0,
+        "X": 500.0,
+        "X2": 0.0,
+        "Y": 740.0
+      },
+      {
+        "Func": "<not sampled>",
+        "Line Number": 3,
+        "Source": "3\t\tdouble A[SCALE][SCALE];\n",
+        "Time": 0.0,
+        "Time %": 0.0,
+        "X": 500.0,
+        "X2": 0.0,
+        "Y": 720.0
+      },
+      {
+        "Func": "<not sampled>",
+        "Line Number": 4,
+        "Source": "4\t\tdouble B[SCALE][SCALE];\n",
+        "Time": 0.0,
+        "Time %": 0.0,
+        "X": 500.0,
+        "X2": 0.0,
+        "Y": 700.0
+      },
+      {
+        "Func": "<not sampled>",
+        "Line Number": 5,
+        "Source": "5\t\t\n",
+        "Time": 0.0,
+        "Time %": 0.0,
+        "X": 500.0,
+        "X2": 0.0,
+        "Y": 680.0
+      },
+      {
+        "Func": "access_by_row",
+        "Line Number": 6,
+        "Source": "6\t\tvoid access_by_row(int row_num) {\n",
+        "Time": 0.0,
+        "Time %": 0.0,
+        "X": 500.0,
+        "X2": 0.0,
+        "Y": 660.0
+      },
+      {
+        "Func": "<not sampled>",
+        "Line Number": 7,
+        "Source": "7\t\t    int idx = 0;\n",
+        "Time": 0.0,
+        "Time %": 0.0,
+        "X": 500.0,
+        "X2": 0.0,
+        "Y": 640.0
+      },
+      {
+        "Func": "access_by_row",
+        "Line Number": 8,
+        "Source": "8\t\t    for (; idx < SCALE; idx++) {\n",
+        "Time": 0.01,
+        "Time %": 0.14,
+        "X": 500.0,
+        "X2": 0.0,
+        "Y": 620.0
+      },
+      {
+        "Func": "access_by_row",
+        "Line Number": 9,
+        "Source": "9\t\t        B[row_num][idx] = A[row_num][idx];\n",
+        "Time": 0.31,
+        "Time %": 8.44,
+        "X": 500.0,
+        "X2": 0.0,
+        "Y": 600.0
+      },
+      {
+        "Func": "<not sampled>",
+        "Line Number": 10,
+        "Source": "10\t\t    }\n",
+        "Time": 0.0,
+        "Time %": 0.0,
+        "X": 500.0,
+        "X2": 0.0,
+        "Y": 580.0
+      },
+      {
+        "Func": "<not sampled>",
+        "Line Number": 11,
+        "Source": "11\t\t}\n",
+        "Time": 0.0,
+        "Time %": 0.0,
+        "X": 500.0,
+        "X2": 0.0,
+        "Y": 560.0
+      },
+      {
+        "Func": "<not sampled>",
+        "Line Number": 12,
+        "Source": "12\t\t\n",
+        "Time": 0.0,
+        "Time %": 0.0,
+        "X": 500.0,
+        "X2": 0.0,
+        "Y": 540.0
+      },
+      {
+        "Func": "access_by_col",
+        "Line Number": 13,
+        "Source": "13\t\tvoid access_by_col(int col_num) {\n",
+        "Time": 0.0,
+        "Time %": 0.0,
+        "X": 500.0,
+        "X2": 0.0,
+        "Y": 520.0
+      },
+      {
+        "Func": "<not sampled>",
+        "Line Number": 14,
+        "Source": "14\t\t    int idx = 0;\n",
+        "Time": 0.0,
+        "Time %": 0.0,
+        "X": 500.0,
+        "X2": 0.0,
+        "Y": 500.0
+      },
+      {
+        "Func": "access_by_col",
+        "Line Number": 15,
+        "Source": "15\t\t    for (; idx < SCALE; idx++) {\n",
+        "Time": 0.01,
+        "Time %": 0.28,
+        "X": 500.0,
+        "X2": 0.0,
+        "Y": 480.0
+      },
+      {
+        "Func": "access_by_col",
+        "Line Number": 16,
+        "Source": "16\t\t        B[idx][col_num] = A[idx][col_num];\n",
+        "Time": 2.65,
+        "Time %": 72.89,
+        "X": 500.0,
+        "X2": 0.0,
+        "Y": 460.0
+      },
+      {
+        "Func": "<not sampled>",
+        "Line Number": 17,
+        "Source": "17\t\t    }\n",
+        "Time": 0.0,
+        "Time %": 0.0,
+        "X": 500.0,
+        "X2": 0.0,
+        "Y": 440.0
+      },
+      {
+        "Func": "access_by_col",
+        "Line Number": 18,
+        "Source": "18\t\t}\n",
+        "Time": 0.01,
+        "Time %": 0.14,
+        "X": 500.0,
+        "X2": 0.0,
+        "Y": 420.0
+      },
+      {
+        "Func": "<not sampled>",
+        "Line Number": 19,
+        "Source": "19\t\t\n",
+        "Time": 0.0,
+        "Time %": 0.0,
+        "X": 500.0,
+        "X2": 0.0,
+        "Y": 400.0
+      },
+      {
+        "Func": "recursive_factorial",
+        "Line Number": 20,
+        "Source": "20\t\tlong long recursive_factorial(int n) {\n",
+        "Time": 0.07,
+        "Time %": 1.8,
+        "X": 500.0,
+        "X2": 0.0,
+        "Y": 380.0
+      },
+      {
+        "Func": "recursive_factorial",
+        "Line Number": 21,
+        "Source": "21\t\t    if (n == 0 || n == 1) {\n",
+        "Time": 0.04,
+        "Time %": 1.11,
+        "X": 500.0,
+        "X2": 0.0,
+        "Y": 360.0
+      },
+      {
+        "Func": "<not sampled>",
+        "Line Number": 22,
+        "Source": "22\t\t        return 1;\n",
+        "Time": 0.0,
+        "Time %": 0.0,
+        "X": 500.0,
+        "X2": 0.0,
+        "Y": 340.0
+      },
+      {
+        "Func": "<not sampled>",
+        "Line Number": 23,
+        "Source": "23\t\t    }\n",
+        "Time": 0.0,
+        "Time %": 0.0,
+        "X": 500.0,
+        "X2": 0.0,
+        "Y": 320.0
+      },
+      {
+        "Func": "recursive_factorial",
+        "Line Number": 24,
+        "Source": "24\t\t    return n * recursive_factorial(n - 1);\n",
+        "Time": 0.12,
+        "Time %": 3.18,
+        "X": 500.0,
+        "X2": 0.0,
+        "Y": 300.0
+      },
+      {
+        "Func": "recursive_factorial",
+        "Line Number": 25,
+        "Source": "25\t\t}\n",
+        "Time": 0.17,
+        "Time %": 4.56,
+        "X": 500.0,
+        "X2": 0.0,
+        "Y": 280.0
+      },
+      {
+        "Func": "<not sampled>",
+        "Line Number": 26,
+        "Source": "26\t\t\n",
+        "Time": 0.0,
+        "Time %": 0.0,
+        "X": 500.0,
+        "X2": 0.0,
+        "Y": 260.0
+      },
+      {
+        "Func": "do_task",
+        "Line Number": 27,
+        "Source": "27\t\tvoid do_task() {\n",
+        "Time": 0.0,
+        "Time %": 0.0,
+        "X": 500.0,
+        "X2": 0.0,
+        "Y": 240.0
+      },
+      {
+        "Func": "<not sampled>",
+        "Line Number": 28,
+        "Source": "28\t\t    int loop = 0;\n",
+        "Time": 0.0,
+        "Time %": 0.0,
+        "X": 500.0,
+        "X2": 0.0,
+        "Y": 220.0
+      },
+      {
+        "Func": "<not sampled>",
+        "Line Number": 29,
+        "Source": "29\t\t    long long ans = 0;\n",
+        "Time": 0.0,
+        "Time %": 0.0,
+        "X": 500.0,
+        "X2": 0.0,
+        "Y": 200.0
+      },
+      {
+        "Func": "<not sampled>",
+        "Line Number": 30,
+        "Source": "30\t\t    for (; loop < SCALE * 100; loop++) {\n",
+        "Time": 0.0,
+        "Time %": 0.0,
+        "X": 500.0,
+        "X2": 0.0,
+        "Y": 180.0
+      },
+      {
+        "Func": "<not sampled>",
+        "Line Number": 31,
+        "Source": "31\t\t        access_by_row(loop % SCALE);\n",
+        "Time": 0.0,
+        "Time %": 0.0,
+        "X": 500.0,
+        "X2": 0.0,
+        "Y": 160.0
+      },
+      {
+        "Func": "<not sampled>",
+        "Line Number": 32,
+        "Source": "32\t\t        access_by_col(loop % SCALE);\n",
+        "Time": 0.0,
+        "Time %": 0.0,
+        "X": 500.0,
+        "X2": 0.0,
+        "Y": 140.0
+      },
+      {
+        "Func": "<not sampled>",
+        "Line Number": 33,
+        "Source": "33\t\t        ans = recursive_factorial(SCALE);\n",
+        "Time": 0.0,
+        "Time %": 0.0,
+        "X": 500.0,
+        "X2": 0.0,
+        "Y": 120.0
+      },
+      {
+        "Func": "<not sampled>",
+        "Line Number": 34,
+        "Source": "34\t\t    }\n",
+        "Time": 0.0,
+        "Time %": 0.0,
+        "X": 500.0,
+        "X2": 0.0,
+        "Y": 100.0
+      },
+      {
+        "Func": "<not sampled>",
+        "Line Number": 35,
+        "Source": "35\t\t}\n",
+        "Time": 0.0,
+        "Time %": 0.0,
+        "X": 500.0,
+        "X2": 0.0,
+        "Y": 80.0
+      },
+      {
+        "Func": "<not sampled>",
+        "Line Number": 36,
+        "Source": "36\t\t\n",
+        "Time": 0.0,
+        "Time %": 0.0,
+        "X": 500.0,
+        "X2": 0.0,
+        "Y": 60.0
+      },
+      {
+        "Func": "<not sampled>",
+        "Line Number": 37,
+        "Source": "37\t\tvoid main() {\n",
+        "Time": 0.0,
+        "Time %": 0.0,
+        "X": 500.0,
+        "X2": 0.0,
+        "Y": 40.0
+      },
+      {
+        "Func": "<not sampled>",
+        "Line Number": 38,
+        "Source": "38\t\t    do_task();\n",
+        "Time": 0.0,
+        "Time %": 0.0,
+        "X": 500.0,
+        "X2": 0.0,
+        "Y": 20.0
+      },
+      {
+        "Func": "<not sampled>",
+        "Line Number": 39,
+        "Source": "39\t\t}",
+        "Time": 0.0,
+        "Time %": 0.0,
+        "X": 500.0,
+        "X2": 0.0,
+        "Y": 0.0
+      }
+    ],
+    "data-e2165f52457653d76f22377a58ee4ffe": [
+      {
+        "Func": "do_task",
+        "Time": 0.0
+      },
+      {
+        "Func": "access_by_row",
+        "Time": 0.32
+      },
+      {
+        "Func": "recursive_factorial",
+        "Time": 0.4
+      },
+      {
+        "Func": "access_by_col",
+        "Time": 2.6699999999999995
+      }
+    ]
+  },
+  "hconcat": [
+    {
+      "vconcat": [
+        {
+          "data": {
+            "name": "data-e2165f52457653d76f22377a58ee4ffe"
+          },
+          "encoding": {
+            "x": {
+              "field": "Time",
+              "type": "quantitative"
+            },
+            "y": {
+              "field": "Func",
+              "sort": "-x",
+              "type": "nominal"
+            }
+          },
+          "mark": "bar",
+          "selection": {
+            "selector001": {
+              "fields": [
+                "Func"
+              ],
+              "type": "single"
+            }
+          }
+        },
+        {
+          "data": {
+            "name": "data-8b712526eec9c16f11e72c8f871a3121"
+          },
+          "encoding": {
+            "tooltip": {
+              "field": "Source",
+              "type": "nominal"
+            },
+            "x": {
+              "field": "Time",
+              "type": "quantitative"
+            },
+            "y": {
+              "field": "Line Number",
+              "type": "nominal"
+            }
+          },
+          "mark": "bar",
+          "transform": [
+            {
+              "filter": {
+                "selection": "selector001"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "data": {
+        "name": "data-8b712526eec9c16f11e72c8f871a3121"
+      },
+      "layer": [
+        {
+          "encoding": {
+            "opacity": {
+              "field": "Time %",
+              "scale": {
+                "domain": [
+                  1,
+                  100
+                ],
+                "range": [
+                  0,
+                  1
+                ],
+                "type": "log"
+              },
+              "type": "quantitative"
+            },
+            "tooltip": [
+              {
+                "field": "Time %",
+                "title": "Time Percentage",
+                "type": "quantitative"
+              },
+              {
+                "field": "Time",
+                "title": "Time Usage",
+                "type": "quantitative"
+              }
+            ],
+            "x": {
+              "axis": null,
+              "field": "X",
+              "type": "quantitative"
+            },
+            "y": {
+              "axis": null,
+              "field": "Line Number",
+              "type": "ordinal"
+            }
+          },
+          "height": 780.0,
+          "mark": {
+            "color": "red",
+            "type": "bar"
+          },
+          "width": 500.0
+        },
+        {
+          "encoding": {
+            "text": {
+              "field": "Source",
+              "type": "nominal"
+            },
+            "tooltip": [
+              {
+                "field": "Time %",
+                "title": "Time Percentage",
+                "type": "quantitative"
+              },
+              {
+                "field": "Time",
+                "title": "Time Usage",
+                "type": "quantitative"
+              }
+            ],
+            "x": {
+              "axis": null,
+              "field": "X2",
+              "type": "quantitative"
+            },
+            "y": {
+              "axis": null,
+              "field": "Line Number",
+              "type": "ordinal"
+            }
+          },
+          "height": 780.0,
+          "mark": {
+            "align": "left",
+            "size": 16.0,
+            "type": "text"
+          },
+          "width": 500.0
+        }
+      ]
+    }
+  ]
+}

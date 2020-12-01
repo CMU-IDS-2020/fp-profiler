@@ -1,6 +1,7 @@
 from flask import Flask, request
 import os
 from subprocess import Popen, PIPE
+import json
 
 app = Flask(__name__)
 
@@ -15,4 +16,8 @@ def hello():
     (output, err) = process.communicate()
     exit_code = process.wait()
 
-    return output
+    print(output)
+    with open('test.json') as f:
+        s = json.load(f)
+
+    return s

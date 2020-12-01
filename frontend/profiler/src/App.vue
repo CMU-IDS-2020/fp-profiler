@@ -12,6 +12,7 @@
         <button type="button" class="btn btn-primary" @click="uploadFile">Upload</button>
       </div>
       <p> Response {{ response }} </p>
+      <div id="vis"></div>
     </div>
   </div>
 </template>
@@ -20,6 +21,7 @@
 import HelloWorld from './components/HelloWorld.vue'
 import axios from 'axios'
 import $ from 'jquery'
+import vegaEmbed from 'vega-embed'
 
 export default {
   name: 'App',
@@ -47,7 +49,7 @@ export default {
         processData: false,
         success: response => {
           this.response = response;
-          console.log(this.response);
+          vegaEmbed('#vis', response);
         },
       });
     }
