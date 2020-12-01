@@ -2,7 +2,7 @@
 
 * **Online URL**: TODO
 * **Team members**:
-  * Contact person: TODO@andrew.cmu.edu
+  * Contact person: haonanw@andrew.cmu.edu
   * weiyizha@andrew.cmu.edu
   * lichenj@andrew.cmu.edu
   * yijiez2@andrew.cmu.edu
