@@ -11,7 +11,7 @@
         </form>
         <button type="button" class="btn btn-primary" @click="uploadFile">Upload</button>
       </div>
-      <p> Response {{ response }} </p>
+      <!-- <p> Response {{ response }} </p> -->
       <div id="vis"></div>
     </div>
   </div>

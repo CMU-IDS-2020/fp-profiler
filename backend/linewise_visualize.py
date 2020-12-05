@@ -3,11 +3,7 @@ import streamlit as st
 import altair as alt
 import pandas as pd
 
-line_width = 20.0
-
-code_panel_width = 500.0
-
-def code_line_visualize(df):
+def code_line_visualize(df, line_width=20.0, code_panel_width=500.0):
     '''
     Data Frame()
     'Line Number': line_numbers,
