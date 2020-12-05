@@ -30,16 +30,21 @@ def hello():
     os.system('./prog')
     os.system('gprof --graph prog gmon.out  > graph_file')
     os.system('gprof -l prog gmon.out  > linewise_file')
+
     '''
     Now we have the outputs. Visualize and pass it back to the frontend.
     '''
-    df = load_line_profile(local_path, 'linewise_file')
-    chart = linewise_barchart(df)
-    # chart.save('new.json')
+    # for debug purpose. Only linux can host grof so far.
+    if os.path.isfile('linewise_file'):
+        df = load_line_profile(local_path, 'linewise_file')
+        chart = linewise_barchart(df)
+        # chart.save('new.json')
 
 
-    '''
-    TODO: Maybe the temporary files should be cleared or
-    stored somewhere serving as history data.
-    '''
-    return json.loads(chart.to_json())
+        '''
+        TODO: Maybe the temporary files should be cleared or
+        stored somewhere serving as history data.
+        '''
+        return json.loads(chart.to_json())
+    else:
+        return json.load('test.json')
