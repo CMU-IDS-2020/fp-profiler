@@ -24,6 +24,10 @@ import $ from 'jquery'
 import vegaEmbed from 'vega-embed'
 import GoDiagram from './components/GoDiagram.vue'
 
+function obtainHighlightItems(view_) {
+  return view_.scenegraph().root.items[0].items[1].items[0].items[1].items[0].items[1].items;
+}
+
 export default {
   name: 'App',
   components: {
@@ -63,9 +67,44 @@ export default {
         processData: false,
         success: response => {
           this.response = response;
-          vegaEmbed('#vis', response);
+          vegaEmbed('#vis', response).then(({spec, view}) => {
+          this.vega_view = view;
+          // console.log(view.scenegraph().root.items[0].items[1].items[0].items[1].items[0].items[1].items.length);
+          // this.highlightLinesByFunc('access_by_col');
+          // this.highlightLinesByFunc('access_by_row');
+          // this.highlightLinesByLnum([15, 16, 17]);
+
+    // view.addEventListener('click', function (event, item) {
+    //     console.log(item.mark);
+    //       })
+        });
         },
       });
+    },
+    highlightLines(items) {
+      // let items = obtainHighlightItems(this.vega_view);
+      for (let item of items) {
+        item.opacity = 0.5;
+        this.vega_view.dirty(item);
+      }
+    },
+    clearHighlightLines(items) {
+      for (let item of items) {
+        if (item.opacity > 0.0) {
+          item.opacity = 0.0;
+          this.vega_view.dirty(item);
+        }
+      }
+    },
+    highlightLinesByFunc(func_name) {
+      let items = obtainHighlightItems(this.vega_view);
+      this.clearHighlightLines(items);
+      this.highlightLines(items.filter(item=>(item.datum.Func === func_name)));
+    },
+    highlightLinesByLnum(line_nums) {
+      let items = obtainHighlightItems(this.vega_view);
+      this.clearHighlightLines(items);
+      this.highlightLines(items.filter(item=>(line_nums.includes(item.datum['Line Number']))));
     }
   },
 }
