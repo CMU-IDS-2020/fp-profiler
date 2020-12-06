@@ -35,7 +35,8 @@ def hello():
     Now we have the outputs. Visualize and pass it back to the frontend.
     '''
     # for debug purpose. Only linux can host grof so far.
-    if os.path.isfile('linewise_file'):
+    if os.path.isfile('linewise_file') and os.path.getsize('linewise_file') > 0\
+        and os.path.isfile('graph_file') and os.path.getsize('graph_file') > 0:
         df = load_line_profile(local_path, 'linewise_file')
         chart = linewise_barchart(df)
         # chart.save('new.json')
@@ -47,4 +48,4 @@ def hello():
         '''
         return json.loads(chart.to_json())
     else:
-        return json.load('test.json')
+        return json.load(open('test.json', 'r'))

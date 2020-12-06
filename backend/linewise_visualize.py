@@ -28,6 +28,17 @@ def code_line_visualize(df, line_width=20.0, code_panel_width=500.0):
     ).properties(width=code_panel_width,\
         height=line_width * len(df))
 
+    transparent_plot = alt.Chart(df).mark_bar(color=alt.Value('yellow')).encode(
+        alt.X('X:Q', axis=None),
+        alt.Y('Line Number:O', axis=None),
+        opacity=alt.value(0),
+        tooltip=[
+            alt.Tooltip('Time %', title='Time Percentage'),
+            alt.Tooltip('Time', title='Time Usage')
+        ]
+    ).properties(width=code_panel_width,\
+        height=line_width * len(df))
+
     text_plot = alt.Chart(df).mark_text(align='left', size=line_width * 0.8).encode(
         alt.X('X2:Q', type='quantitative', axis=None),
         alt.Y('Line Number:O', axis=None),
@@ -40,7 +51,7 @@ def code_line_visualize(df, line_width=20.0, code_panel_width=500.0):
         height=line_width * len(df))
 
     # st.write(alt.layer(rect_plot, text_plot).configure_view(strokeOpacity=0))
-    return alt.layer(rect_plot, text_plot)
+    return alt.layer(rect_plot, transparent_plot, text_plot)
 
 if __name__ == "__main__":
     st.markdown('# Demo Line by Line CPU Usage')
