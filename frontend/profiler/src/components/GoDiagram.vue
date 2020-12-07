@@ -3,13 +3,23 @@
 </template>
 
 <script>
+<<<<<<< HEAD
+=======
+// Reference: https://gojs.net/latest/samples/vue.html
+// This is only for the evaluation purpose of gojs library.
+
+>>>>>>> bd4c2e9792a3b3c4bcda9b5daa8c4db0067745e4
 import go from 'gojs'
 var $ = go.GraphObject.make;
 
 export default {
   name: 'GoDiagram',
   props: {
+<<<<<<< HEAD
     modelData: String
+=======
+    modelData: Object,
+>>>>>>> bd4c2e9792a3b3c4bcda9b5daa8c4db0067745e4
   },
   mounted: function() {
     var self = this;

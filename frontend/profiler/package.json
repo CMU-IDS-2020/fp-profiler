@@ -14,7 +14,8 @@
     "vega": "^5.17.0",
     "vega-embed": "^6.13.0",
     "vega-lite": "^4.17.0",
-    "vue": "^2.6.12"
+    "vue": "^2.6.12",
+    "vue-diagrams": "^0.0.1-development"
   },
   "devDependencies": {
     "@vue/cli-service": "~4.5.0",
