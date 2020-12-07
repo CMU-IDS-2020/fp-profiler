@@ -11,23 +11,14 @@
         </form>
         <button type="button" class="btn btn-primary" @click="uploadFile">Upload</button>
       </div>
-<<<<<<< HEAD
-    <GoDiagram v-bind:modelData="diagramData"
-               style="border: solid 1px black; width:100%; height:400px"></GoDiagram>
-=======
       <GoDiagram :modelData="diagramData" style="border: solid 1px black; width:100%; height:400px"></GoDiagram>
       <!-- <p> Response {{ response }} </p> -->
->>>>>>> bd4c2e9792a3b3c4bcda9b5daa8c4db0067745e4
       <div id="vis"></div>
     </div>
   </div>
 </template>
 
 <script>
-<<<<<<< HEAD
-import GoDiagram from './components/GoDiagram.vue'
-=======
->>>>>>> bd4c2e9792a3b3c4bcda9b5daa8c4db0067745e4
 import axios from 'axios'
 import $ from 'jquery'
 import vegaEmbed from 'vega-embed'
@@ -45,11 +36,7 @@ export default {
   data() {
     return {
       file: null,
-<<<<<<< HEAD
-      response: '',
-=======
       response: ':)?',
->>>>>>> bd4c2e9792a3b3c4bcda9b5daa8c4db0067745e4
       diagramData: {  // passed to <diagram> as its modelData
         nodeDataArray: [
           { key: 1, text: "Alpha", color: "lightblue" },
