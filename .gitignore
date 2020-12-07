@@ -5,6 +5,9 @@ node_modules
 /backend/temp
 /backend/__pycache__
 
+# dependencies
+/deps/
+
 
 # local env files
 .env.local

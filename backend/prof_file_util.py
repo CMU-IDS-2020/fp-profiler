@@ -3,11 +3,28 @@ import re
 
 def load_source(source_file):
     code_lines = []
+    line_num = 0
     for line in open(source_file, 'r'):
-        code_lines.append(line)
+        line_num += 1
+        code_lines.append(str(line_num) + '\t\t' + line)
 
     # print('Num of lines', len(code_lines))
     return code_lines    
+
+def load_ctags_output(ctags_file):
+    num_func_dict = {}
+    for line in open(ctags_file, 'r'):
+        tokens = line.strip().split('\t')
+        if tokens[3] != 'f':
+            continue
+        func = tokens[0]
+        begin_line_num = int(tokens[4].split(':')[1])
+        end_line_num = int(tokens[6].split(':')[1])
+
+        for idx in range(begin_line_num, end_line_num + 1):
+            num_func_dict[idx] = func
+
+    return num_func_dict
 
 # with certain prof format
 def load_profile(prof_file):
@@ -40,6 +57,7 @@ def load_profile(prof_file):
 def load_line_profile(source_file, prof_file):
     code_lines = load_source(source_file)
     line_num_dct = load_profile(prof_file)
+    num_func_dct = load_ctags_output('ctags_output')
 
     time_percentage = []
     self_seconds = []
@@ -50,10 +68,14 @@ def load_line_profile(source_file, prof_file):
         if idx in line_num_dct:
             time_percentage.append(line_num_dct[idx][0])
             self_seconds.append(line_num_dct[idx][2])
-            func_names.append(line_num_dct[idx][3])
         else:
             time_percentage.append(0.0)
             self_seconds.append(0.0)
+
+        # use the dict built from ctags output
+        if idx in num_func_dct:
+            func_names.append(num_func_dct[idx])
+        else:
             func_names.append('<not sampled>')
 
     return pd.DataFrame({
@@ -63,8 +85,6 @@ def load_line_profile(source_file, prof_file):
         'Time': self_seconds,
         'Func': func_names
     })
-    
-
     
 
 if __name__ == "__main__":

@@ -15,7 +15,7 @@ def code_line_visualize(df, line_width=20.0, code_panel_width=500.0):
     df['Y'] = (len(df) - df['Line Number']) * line_width
     df['X'] = code_panel_width
     df['X2'] = 0.0
-    df['Source'] = df['Line Number'].astype(str) + '\t\t' + df['Source']
+    
     rect_plot = alt.Chart(df).mark_bar(color=alt.Value('red')).encode(
         alt.X('X:Q', axis=None),
         alt.Y('Line Number:O', axis=None),

@@ -52,17 +52,12 @@ export default {
         cache: false,
         processData: false,
         success: response => {
-          this.response = response;
-          vegaEmbed('#vis', response).then(({spec, view}) => {
+          this.response = response.vega_json;
+          vegaEmbed('#vis', this.response).then(({spec, view}) => {
           this.vega_view = view;
-          // console.log(view.scenegraph().root.items[0].items[1].items[0].items[1].items[0].items[1].items.length);
           // this.highlightLinesByFunc('access_by_col');
           // this.highlightLinesByFunc('access_by_row');
           // this.highlightLinesByLnum([15, 16, 17]);
-
-    // view.addEventListener('click', function (event, item) {
-    //     console.log(item.mark);
-    //       })
         });
         },
       });
