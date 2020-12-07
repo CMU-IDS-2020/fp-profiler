@@ -28,9 +28,11 @@ def hello():
         'error_message': the compile failure message
     }
     '''
-    file = request.files['file']
-    local_path = os.path.join('temp', file.filename)
-    file.save(local_path)
+    code = request.get_json()['code']
+    print(code)
+    local_path = 'temp.c' # TODO: hash file names to handle concurrency issues
+    with open(local_path, 'w') as f:
+        f.write(code)
 
     process = Popen(['wc', '-l', local_path], stdout=PIPE)
     (output, err) = process.communicate()
