@@ -1,6 +1,3 @@
-# obsolete version
-
-
 import numpy as np
 import re
 import json
@@ -23,6 +20,26 @@ class Node:
     def __str__(self):
         return self.print_msg
 
+class fullNodeInfo:
+    def __init__(self, ID, name, selfTime, totalTime, parent, child, called):
+        self.ID = ID
+        self.name = name
+        self.selfTime = selfTime
+        self.totalTime = totalTime
+        self.parent = parent # a list of edge index
+        self.child = child
+        self.called = called
+
+class baseNodeArr:
+    def __init__(self, ID, name, time, isExpanded, percent, hide, timePct):
+        self.ID = ID
+        self.name = name
+        self.time = time
+        self.isExpanded = True
+        self.percent = 1
+        self.hide = False
+        self.timePct = timePct
+
 class Edge:
     def __init__(self, parent, child, childcalled, childtime, cctime):
         self.parent = parent
@@ -38,6 +55,24 @@ class Edge:
     def __str__(self):
         return self.print_msg
         
+class fullEdgeInfo:
+    def __init__(self, _from, _to, called, time, cTime, gcTime):
+        self._from = _from
+        self.to = _to
+        self.called = called
+        self.time = time
+        self.cTime = cTime
+        self.gcTime = gcTime
+
+class baseEdgeArr:
+    def __init__(self, _from, _to, validcalled, validTime, validCTime, validGcTime):
+        self._from = _from
+        self.to = _to
+        self.validcalled = validcalled
+        self.validTime = validTime
+        self.validCTime = validCTime
+        self.validGcTime = validGcTime
+        self.hide = False
 
 def valid_check(raw_txt):
     '''
@@ -193,94 +228,154 @@ def extract(call_graph_path):
     
     return total_edge, index_to_func, func_to_index
 
-# color mapping level 1->5 (cost little -> cost much)
-map_color = {
-    1: '#ee9779',
-    2: '#ea7254',
-    3: '#dc4a38',
-    4: '#bb2f29',
-    5: '#8c1a18'
-}
-
-def generate_js_input(total_edge, index_to_func, outfile_edge, outfile_node):
-    json_node = []
-    json_edge = []
+def sort_node(total_edge, func_to_index, index_to_func):
+    
+    func_in_edge_num = {}
+    func_out_edge = {}
+    self_cycle_func = []
+    for func in func_to_index:
+        func_in_edge_num[func] = 0 # function name string
+    
     for edge in total_edge:
-        new_edge = {}
-        new_edge['from'] = edge.parent
-        new_edge['to'] = edge.child
-        new_edge['called'] = 'called {} times'.format(edge.child_called)
-        # new_edge['ctime'] = edge.child_time
-        # new_edge['gctime'] = edge.grandchild_time
+        func_in_edge_num[edge.child] += 1
+        if edge.parent in func_out_edge:
+            func_out_edge[edge.parent].append(edge)
+        else:
+            func_out_edge[edge.parent] = [edge]
+        if edge.child == edge.parent:
+            self_cycle_func.append(edge.child)
+    
+    func_list = []
+    func_to_sorted_index = {}
+    cur_idx = 0
+
+    while (1):
+        if (cur_idx == len(func_to_index)):
+            break
         
-        total_child_time = index_to_func[func_to_index[edge.parent]].child_time
-        if (total_child_time == 0):
-            new_edge['ewidthpct'] = 1
-        else:
-            new_edge['ewidthpct'] = (edge.child_time + edge.grandchild_time)/total_child_time
-        new_edge['ewidth'] = new_edge['ewidthpct'] * baseWidth
-        json_edge.append(new_edge)
+        for func in func_in_edge_num:
+            if (func_in_edge_num[func] == 0) or (func_in_edge_num[func] == 1 and func in self_cycle_func):
+                func_to_sorted_index[func] = cur_idx
+                func_list.append(index_to_func[func_to_index[func]])
+                
+                if func in func_out_edge:
+                    for edge in func_out_edge[func]:
+                        func_in_edge_num[edge.child] -= 1
+                
+                cur_idx += 1
+                func_in_edge_num[func] = -1
+    
+    full_edge_info_whole_list = []
+    for func in func_list:
+        full_edge_info_list = []
+        if func.name in func_out_edge:
+            for edge in func_out_edge[func.name]:
+                full_edge = fullEdgeInfo(func_to_sorted_index[edge.parent], func_to_sorted_index[edge.child], edge.child_called, edge.child_time + edge.grandchild_time, edge.child_time, edge.grandchild_time)
+                if full_edge._from == full_edge.to:
+                    full_edge.time = 0
+                    full_edge.cTime = 0
+                    full_edge.gcTime = 0
+                    
+                full_edge_info_list.append(full_edge)
+        sorted(full_edge_info_list, key=lambda ele:ele.to)
+        full_edge_info_whole_list += full_edge_info_list
 
-    for node_idx in index_to_func:
+    parent_list = []
+    for i in range(len(func_list)):
+        parent_list.append([])
+    child_list = []
+    for i in range(len(func_list)):
+        child_list.append([])
+
+    for i in range(len(full_edge_info_whole_list)):
+        _from = full_edge_info_whole_list[i]._from
+        _to = full_edge_info_whole_list[i].to
+
+        parent_list[_to].append(i)
+        child_list[_from].append(i)
+    
+    node_list = []
+    for i in range(len(func_list)):
+        func = func_list[i]
+        new_node = fullNodeInfo(i, func.name, func.self_time, func.self_time + func.child_time, parent_list[i], child_list[i], func.self_call)
+        node_list.append(new_node)
+    
+    return node_list, full_edge_info_whole_list 
+
+
+def generate_js_input(node_list, edge_list, output):
+    whole_js = {}
+
+    json_fullNodeInfo = []
+    json_baseNodeArr = []
+    json_fullEdgeInfo = []
+    json_baseEdgeArr = []
+
+    for i in range(len(node_list)):
         new_node = {}
-        node = index_to_func[node_idx]
-        new_node['key'] = node.name
-        # new_node['selfcall'] = node.self_call
-        # new_node['selftime'] = node.self_time
-        # new_node['childtime'] = node.child_time
-        # new_node['totalpct'] = node.total_pct
-        if node.total_pct == 0:
-            new_node['color'] = 1
-        else:
-            # scale to 0.5 - 1
-            colorpct = (node.total_pct * node.self_time / (node.self_time + node.child_time) / 100)
-            if colorpct < 0.2:
-                new_node['color'] = 1
-            elif colorpct < 0.4:
-                new_node['color'] = 2
-            elif colorpct < 0.6:
-                new_node['color'] = 3
-            elif colorpct < 0.8:
-                new_node['color'] = 4
-            else:
-                new_node['color'] = 5
-        new_node['color'] = map_color[new_node['color']]
-        new_node['info'] = '{}\\ncalls:{}\\ntime:{:.2f}'.format(node.name, node.self_call, node.self_time)
-        json_node.append(new_node)
-    
-    with open(outfile_edge, 'w') as f:
-        json_edge = json.dumps(json_edge)
-        f.write(json_edge)
+        node = node_list[i]
+        new_node["ID"] = i
+        new_node["name"] = node.name
+        new_node["selfTime"] = node.selfTime
+        new_node["totalTime"] = node.totalTime
+        new_node["parent"] = node.parent
+        new_node["child"] = node.child
+        new_node["called"] = node.called
 
-    with open(outfile_node, 'w') as f:
-        json_node = json.dumps(json_node)
-        f.write(json_node)
-    
-    return json_node, json_edge
+        json_fullNodeInfo.append(new_node)
 
-def generate_html(sample_html, demo_html, nodes, edges):
-    # generate html by filling 
-    # "myDiagram.model = new go.GraphLinksModel()" 
-    # in the sample_html
-    
-    with open(sample_html, 'r') as f:
-        sample = f.readlines()
-    
-    sample = ''.join(sample)
-    model_empty = "myDiagram\.model = new go\.GraphLinksModel\(\)"
-    model_fill = "myDiagram.model = new go.GraphLinksModel({}, {})".format(nodes, edges)
-    instance = re.sub(model_empty, model_fill, sample)
+        new_base_node = {}
+        new_base_node["key"] = i
+        new_base_node["name"] = node.name
+        new_base_node["time"] = node.selfTime
+        new_base_node["isExpanded"] = True
+        new_base_node["percent"] = 1
+        new_base_node["hide"] = False
+        new_base_node["timePct"] = node.selfTime / node_list[0].totalTime
 
-    with open(demo_html, 'w') as f:
-        f.write(instance)
+        json_baseNodeArr.append(new_base_node)
 
-# Modify the arguments to call
-call_graph_path = 'data/graph_file'
-outfile_edge = 'data/graph_edge.json'
-outfile_node = 'data/graph_node.json'
-sample_html = 'pageFlowSample.html'
-run_html = 'demo.html'
+
+
+    for i in range(len(edge_list)):
+        new_edge = {}
+        edge = edge_list[i]
+        new_edge['from'] = edge._from
+        new_edge['to'] = edge.to
+        new_edge['called'] = edge.called
+        new_edge['time'] = edge.time
+        new_edge['cTime'] = edge.cTime
+        new_edge['gcTime'] = edge.gcTime
+
+        json_fullEdgeInfo.append(new_edge)
+
+        new_base_edge = {}
+        new_base_edge['from'] = edge._from
+        new_base_edge['to'] = edge.to
+        new_base_edge['validcalled'] = edge.called
+        new_base_edge['validTime'] = edge.time
+        new_base_edge['validCTime'] = edge.cTime
+        new_base_edge['validGcTime'] = edge.gcTime
+        new_base_edge['hide'] = False
+
+        json_baseEdgeArr.append(new_base_edge)       
+    
+    whole_js["fullNodeInfo"] = json_fullNodeInfo
+    whole_js["fullEdgeInfo"] = json_fullEdgeInfo
+    whole_js["baseNodeArr"] = json_baseNodeArr
+    whole_js["baseEdgeArr"] = json_baseEdgeArr
+
+    with open(output, 'w') as f:
+        f.write(json.dumps(whole_js))    
+
+    
+ 
+call_graph_path = '../data/call_graph.out'
+outfile_edge = '../data/graph_edge.json'
+outfile_node = '../data/graph_node.json'
+output = '../data/demo-4.json'
+
 
 total_edge, index_to_func, func_to_index = extract(call_graph_path)
-nodes, edges = generate_js_input(total_edge, index_to_func, outfile_edge, outfile_node)
-generate_html(sample_html, run_html, nodes, edges)
+node_list, edge_list = sort_node(total_edge, func_to_index, index_to_func)
+generate_js_input(node_list, edge_list, output)
