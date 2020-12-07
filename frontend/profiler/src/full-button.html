@@ -15,56 +15,18 @@
 
         var $ = go.GraphObject.make;
 
-        /* begin data */
-        var fullNodeInfo = [
-            {"ID": 0, "name": "main", "selfTime": 0.0, "totalTime": 2.44, "parent": [], "child": [0, 1], "called": 1}, 
-            {"ID": 1, "name": "fb", "selfTime": 2.29, "totalTime": 2.29, "parent": [0, 2], "child": [2], "called": 1}, 
-            {"ID": 2, "name": "sum", "selfTime": 0.15, "totalTime": 0.15, "parent": [1], "child": [], "called": 1}
-        ];
-
-        var fullEdgeInfo = [
-            {"from": 0, "to": 1, "called": 1, "time": 2.29, "cTime": 2.29, "gcTime": 0.0}, 
-            {"from": 0, "to": 2, "called": 1, "time": 0.15, "cTime": 0.15, "gcTime": 0.0}, 
-            {"from": 1, "to": 1, "called": 331160280, "time": 0, "cTime": 0, "gcTime": 0}
-        ];
-        
-
-        var baseNodeArr = [
-            {"key": 0, "name": "main", "time": 0.0, "isExpanded": true, "percent": 1, "hide": false, "timePct": 0.0}, 
-            {"key": 1, "name": "fb", "time": 2.29, "isExpanded": true, "percent": 1, "hide": false, "timePct": 0.9385245901639344}, 
-            {"key": 2, "name": "sum", "time": 0.15, "isExpanded": true, "percent": 1, "hide": false, "timePct": 0.06147540983606557}
-        ];
-
-        var baseEdgeArr = [
-            {"from": 0, "to": 1, "validcalled": 1, "validTime": 2.29, "validCTime": 2.29, "validGcTime": 0.0, "hide": false}, 
-            {"from": 0, "to": 2, "validcalled": 1, "validTime": 0.15, "validCTime": 0.15, "validGcTime": 0.0, "hide": false}, 
-            {"from": 1, "to": 1, "validcalled": 331160280, "validTime": 0, "validCTime": 0, "validGcTime": 0, "hide": false}
-        ];
-
-        /* end data */
-
-        
-        /* begin macro style */
-        var graphTotalTime = fullNodeInfo[0].totalTime;
-        var maxEdgeWidth = 5;
-        var minEdgeWidth = 1;
-
-         
-        var bigfont = "bold 13pt Helvetica, Arial, sans-serif";
-        var smallfont = "bold 11pt Helvetica, Arial, sans-serif";
-
-        /* end marco style */
-
-
         Vue.component("diagram", {
             template: "<div></div>",  // just a plain DIV
-            //props: ["modelData"],  // accept model data as a parameter
+            props: ["modelData"],  // accept model data as a parameter
             mounted: function() {
                 var self = this;
+                var smallfont = "bold 11pt Helvetica, Arial, sans-serif";
+
                 var myDiagram =
                     $(go.Diagram, this.$el,
                     {
                         layout: $(go.LayeredDigraphLayout, { isInitial: false, isOngoing: false, layerSpacing: 50 }),
+                        hoverDelay: 100,
                         "undoManager.isEnabled": true,
                         "toolManager.mouseWheelBehavior": go.ToolManager.WheelZoom,
                         "ChangedSelection": function(e) { self.$emit("changed-selection", e); }
@@ -220,11 +182,32 @@
 
             methods: {
                 model: function() { return this.diagram.model; },
+                getFullNodeInfo: function() {
+                    return this.modelData.fullNodeInfo;
+                },
+                getFullEdgeInfo: function() {
+                    return this.modelData.fullEdgeInfo;
+                },
+                getBaseNodeArr: function() {
+                    return this.modelData.baseNodeArr;
+                },
+                getBaseEdgeArr: function() {
+                    return this.modelData.baseEdgeArr;
+                },
                 updateModel: function() {
                     // No GoJS transaction permitted when replacing Diagram.model.
                     
                     var drawNodeArr = [];
                     let i;
+
+                    var fullNodeInfo = this.getFullNodeInfo();
+                    var fullEdgeInfo = this.getFullEdgeInfo();
+                    var baseNodeArr = this.getBaseNodeArr();
+                    var baseEdgeArr = this.getBaseEdgeArr();
+                    
+                    var graphTotalTime = fullNodeInfo[0].totalTime;
+                    var maxEdgeWidth = 5;
+                    var minEdgeWidth = 1;
                     for (i = 0; i < baseNodeArr.length; i++) {
                         if (baseNodeArr[i].hide == false) {
                             baseNodeArr[i].timePct = baseNodeArr[i].time / graphTotalTime;
@@ -264,6 +247,12 @@
                 
                 collapse_update: function (node_i, percent_decrease) {
                     let i;
+
+                    var fullNodeInfo = this.getFullNodeInfo();
+                    var fullEdgeInfo = this.getFullEdgeInfo();
+                    var baseNodeArr = this.getBaseNodeArr();
+                    var baseEdgeArr = this.getBaseEdgeArr();
+
                     for (i = 0; i < fullNodeInfo[node_i].child.length; i++) {
 
                         let cur_child_edge_id = fullNodeInfo[node_i].child[i];
@@ -303,6 +292,9 @@
                 },
 
                 hide_child: function(child_node, child_edge) {
+                    var baseNodeArr = this.getBaseNodeArr();
+                    var baseEdgeArr = this.getBaseEdgeArr();
+
                     // clear valid time
                     baseEdgeArr[child_edge].validTime = 0;
 
@@ -317,6 +309,11 @@
                 },
 
                 collapse: function(node_i) {
+                    var fullNodeInfo = this.getFullNodeInfo();
+                    var fullEdgeInfo = this.getFullEdgeInfo();
+                    var baseNodeArr = this.getBaseNodeArr();
+                    var baseEdgeArr = this.getBaseEdgeArr();
+
                     // no children to collapse
                     if (fullNodeInfo[node_i].child.length == 0)
                         return;
@@ -389,6 +386,11 @@
                 },
 
                 expand_update: function(node_i, percent_increase) {
+                    var fullNodeInfo = this.getFullNodeInfo();
+                    var fullEdgeInfo = this.getFullEdgeInfo();
+                    var baseNodeArr = this.getBaseNodeArr();
+                    var baseEdgeArr = this.getBaseEdgeArr();
+
                     let i;
                     for (i = 0; i < fullNodeInfo[node_i].child.length; i++ ) {
                         let cur_child_edge_id = fullNodeInfo[node_i].child[i];
@@ -425,7 +427,13 @@
                 },
 
                 expand: function(node_i) {
-                // each time only expand one child, so would not recursively expand
+                    var fullNodeInfo = this.getFullNodeInfo();
+                    var fullEdgeInfo = this.getFullEdgeInfo();
+                    var baseNodeArr = this.getBaseNodeArr();
+                    var baseEdgeArr = this.getBaseEdgeArr();
+
+                    // each time only expand one child, so would not recursively expand
+
 
                     if (fullNodeInfo[node_i].child.length == 0)
                         return;
@@ -505,7 +513,6 @@
                     node.data.isExpanded = true;
                     this.expand(node.data.key);
                     this.updateModel();
-                    // console.log(baseNodeArr);
                 },
 
                 collapse_button: function(e, obj) {
@@ -514,7 +521,6 @@
                     node.data.isExpanded = false;
                     this.collapse(node.data.key);
                     this.updateModel();
-                    // console.log(baseNodeArr);
                 }
             }
             }
@@ -526,8 +532,30 @@
             el: "#sample",
             data: {
                 diagramData: {  // passed to <diagram> as its modelData
-                    nodeDataArray: baseNodeArr,
-                    linkDataArray: baseEdgeArr
+                    fullNodeInfo: [
+                        {"ID": 0, "name": "main", "selfTime": 0.0, "totalTime": 2.44, "parent": [], "child": [0, 1], "called": 1}, 
+                        {"ID": 1, "name": "fb", "selfTime": 2.29, "totalTime": 2.29, "parent": [0, 2], "child": [2], "called": 1}, 
+                        {"ID": 2, "name": "sum", "selfTime": 0.15, "totalTime": 0.15, "parent": [1], "child": [], "called": 1}
+                    ],
+
+                    fullEdgeInfo: [
+                        {"from": 0, "to": 1, "called": 1, "time": 2.29, "cTime": 2.29, "gcTime": 0.0}, 
+                        {"from": 0, "to": 2, "called": 1, "time": 0.15, "cTime": 0.15, "gcTime": 0.0}, 
+                        {"from": 1, "to": 1, "called": 331160280, "time": 0, "cTime": 0, "gcTime": 0}
+                    ],
+        
+
+                    baseNodeArr: [
+                        {"key": 0, "name": "main", "time": 0.0, "isExpanded": true, "percent": 1, "hide": false, "timePct": 0.0}, 
+                        {"key": 1, "name": "fb", "time": 2.29, "isExpanded": true, "percent": 1, "hide": false, "timePct": 0.9385245901639344}, 
+                        {"key": 2, "name": "sum", "time": 0.15, "isExpanded": true, "percent": 1, "hide": false, "timePct": 0.06147540983606557}
+                    ],
+
+                    baseEdgeArr:[
+                        {"from": 0, "to": 1, "validcalled": 1, "validTime": 2.29, "validCTime": 2.29, "validGcTime": 0.0, "hide": false}, 
+                        {"from": 0, "to": 2, "validcalled": 1, "validTime": 0.15, "validCTime": 0.15, "validGcTime": 0.0, "hide": false}, 
+                        {"from": 1, "to": 1, "validcalled": 331160280, "validTime": 0, "validCTime": 0, "validGcTime": 0, "hide": false}
+                    ]
                 },
                 currentNode: null
             },
@@ -535,7 +563,6 @@
                 currentNodeText: {
                     get: function() {
                         var node = this.currentNode;
-                        console.log(node);
                         if (node instanceof go.Node) {
                             return node.data.name;
                         } else {
@@ -552,7 +579,6 @@
                 model: function() { return this.$refs.diag.model(); },
 
                 changedSelection: function(e) {
-                    console.log("change selection");
                     var node = e.diagram.selection.first();
                     if (node instanceof go.Node) {
                     this.currentNode = node;
