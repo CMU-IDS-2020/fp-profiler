@@ -9,8 +9,13 @@
       </form>
     <button type="button" class="btn btn-primary" @click="uploadFile">Upload</button>
     </div>
-    <div class="card border border-dark" style="height: 610px; width: 810px;">
+    <div class="card border border-dark mb-3" style="height: 610px; width: 810px;">
       <div ref="editor" style="height: 600px; width: 800px;"></div>
+    </div>
+    <div v-if="error" class="alert alert-dismissible alert-warning">
+      <button type="button" class="close" data-dismiss="alert" @click="clearError">&times;</button>
+      <h4 class="alert-heading">Error!</h4>
+      <p class="mb-0"> {{ errorMessage }} </p>
     </div>
   </div>
 </template>
@@ -26,9 +31,15 @@ export default {
     return {
       code: '',
       file: null,
+      error: false,
+      errorMessage: '',
     }
   },
   methods: {
+    clearError() {
+      this.error = false;
+      this.errorMessage = '';
+    },
     selectFile() {
       this.file = $('#upload-file')[0][0].files[0];
       var request = new XMLHttpRequest();
@@ -43,7 +54,15 @@ export default {
         code: this.editor.getValue(),
       }).then(response => {
         console.log(response);
-        this.$emit('response', response.data.vega_json);
+        if (response.data.error) {
+          console.log(response.data);
+          this.error = true;
+          this.errorMessage = response.data.error_message;
+        } else {
+          this.error = false;
+          this.errorMessage = '';
+          this.$emit('response', response.data.vega_json);
+        }
       }).catch(function (error) {
         console.log(error);
       });
