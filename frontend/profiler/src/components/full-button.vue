@@ -332,6 +332,7 @@ export default {
                     else
                         baseEdgeArr[i].calledInfo += " (" + baseEdgeArr[i].validTime.toFixed(2) + "s" + ")";
                     baseEdgeArr[i].ewidth = (maxEdgeWidth - minEdgeWidth) * (baseEdgeArr[i].validTime / graphTotalTime) + minEdgeWidth;
+                    baseEdgeArr[i].ifShow = 1;
                 } 
                 else {
                     baseEdgeArr[i].ifShow = 0.2;
