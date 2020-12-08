@@ -21,23 +21,34 @@ export default {
         var NodeInfoSize = new go.Size(50,25);
 
         var smallfont = "bold 11pt Helvetica, Arial, sans-serif";
+        var legendfont = "11pt Helvetica, Arial, sans-serif";
+        var titlefont = "13pt Helvetica, Arial, sans-serif";
 
         var myDiagram =
             $(go.Diagram, this.$el,
             {
                 layout: $(go.LayeredDigraphLayout, { isInitial: false, isOngoing: false, layerSpacing: 50 }),
                 hoverDelay: 100,
+                allowMove: true,
                 "undoManager.isEnabled": true,
                 "toolManager.mouseWheelBehavior": go.ToolManager.WheelZoom,
                 "ChangedSelection": function(e) { self.$emit("changed-selection", e); }
             });
 
+        myDiagram.animationManager.initialAnimationStyle = go.AnimationManager.None;
         /* Define adornment template */
         var defaultAdornment =
             $(
                 go.Adornment, "Spot",
                 $(go.Panel, "Auto",
-                    $(go.Shape, { fill: null, stroke: "dodgerblue", strokeWidth: 4 }),
+                    $(go.Shape, 
+                        {   
+                            fill: null, 
+                            stroke: "dodgerblue", 
+                            strokeWidth: 4,
+                            opacity: 1
+                        },
+                        new go.Binding("opacity", "ifShow")),
                     $(go.Placeholder)),
                 // the button to create a "next" node, at the top-right corner
                 $("Button",
@@ -45,7 +56,12 @@ export default {
                     alignment: go.Spot.TopRight,
                     click: this.expand_button
                     },  // this function is defined below
-                    new go.Binding("visible", "", function(node) { var data = node.data; return !data.isExpanded; }).ofObject(),
+                    new go.Binding("visible", "", function(node) { 
+                        var data = node.data; 
+                        if (data.ifShow == 1)
+                            return !data.isExpanded; 
+                        return false
+                    }).ofObject(),
                     $(go.Shape, "PlusLine", { desiredSize: new go.Size(6, 6) })
                 ),
                 $("Button",
@@ -53,7 +69,12 @@ export default {
                     alignment: go.Spot.TopRight,
                     click: this.collapse_button
                     },  // this function is defined below
-                    new go.Binding("visible", "", function(node) { var data = node.data; return data.isExpanded; }).ofObject(),
+                    new go.Binding("visible", "", function(node) { 
+                        var data = node.data; 
+                        if (data.ifShow == 1)  
+                            return data.isExpanded; 
+                        return false;
+                    }).ofObject(),
                     $(go.Shape, "MinusLine", { desiredSize: new go.Size(6, 6) })
                 ),
         );
@@ -79,10 +100,10 @@ export default {
                         node.diagram.select(node);
                     }
                     }),
-                $("Button",
-                    { alignment: go.Spot.Right, alignmentFocus: go.Spot.Left },
-                    { click: function(e, obj) { alert("Show more info"); } },
-                    $(go.TextBlock, "Show more info"))
+                // $("Button",
+                //     { alignment: go.Spot.Right, alignmentFocus: go.Spot.Left },
+                //     { click: function(e, obj) { alert("Show more info"); } },
+                //     $(go.TextBlock, "Show more info"))
             );
 
         /* Define node template*/
@@ -93,9 +114,11 @@ export default {
                     portId: "",
                     cursor: "pointer",
                     toEndSegmentLength: 50, fromEndSegmentLength: 40,
-                    height: nodeHeight
+                    height: nodeHeight,
+                    width: 200
                 },
                 new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify),
+                new go.Binding("width", "width", function (val) {return val + 1}),
             
                 $(go.Panel,
                         $(go.Panel, "Auto",
@@ -104,9 +127,13 @@ export default {
                             //{ desiredSize: NodeInfoSize },
                                 {
                                     fill: "white",
-                                    height: nodeHeight/2
+                                    height: nodeHeight/2,
+                                    width: 200-1,
+                                    opacity: 1
                                 },
-                                new go.Binding("fill", "color")
+                                new go.Binding("fill", "color"),
+                                new go.Binding("opacity", "width"),
+                                new go.Binding("width", "width")
                             ),
                             {
                                 toolTip: $("ToolTip",
@@ -129,9 +156,13 @@ export default {
                             $(go.Shape, "RoundedBottomRectangle",
                             {
                                 fill: "white",
-                                height: nodeHeight/2
+                                height: nodeHeight/2,
+                                width: 200-1,
+                                opacity: 1
                             },
-                            new go.Binding("fill", "selfColor")
+                            new go.Binding("fill", "selfColor"),
+                            new go.Binding("opacity", "ifShow"),
+                            new go.Binding("width", "widht")
                             ),
                             {
                                 toolTip: $("ToolTip",
@@ -154,9 +185,11 @@ export default {
                     margin: 12,
                     font: smallfont,
                     editable: true,
-                    textAlign: 'center'
+                    textAlign: 'center',
+                    opacity: 1
                     },
                     new go.Binding("text", "name").makeTwoWay()),
+                    new go.Binding("opacity", "ifShow")
             );
                         
     
@@ -166,16 +199,20 @@ export default {
                 {curve: go.Link.Bezier},
                 $(go.Shape,
                     {
-                        stroke: "#2F4F4F"
+                        stroke: "#2F4F4F",
+                        opacity: 1
                     },
-                    new go.Binding("strokeWidth", "ewidth")
+                    new go.Binding("strokeWidth", "ewidth"),
+                    new go.Binding("opacity", "ifShow")
                 ),
                 $(go.Shape,
                     {
                         toArrow: 'standard', 
                         fill: "#2F4F4F", 
-                        scale: 1
-                    }
+                        scale: 1,
+                        opacity: 1
+                    },
+                    new go.Binding("opacity", "ifShow")
                 ),
                 {
                 toolTip: $("ToolTip",
@@ -192,6 +229,111 @@ export default {
                     )
                 }
             )
+
+        /* Set block width */
+        baseNodeArr = this.getBaseNodeArr();
+        let i;
+        for (i = 0; i < baseNodeArr.length; i++ ) {
+            var namelen = baseNodeArr[i].name.length;
+            console.log(baseNodeArr[i].name, namelen);
+            baseNodeArr[i].width = namelen * 10;
+            baseNodeArr[i].width += 40;
+        }
+
+        /* Set legend */
+        var x= -200;
+        var baseY = 150;
+        var ny = 20;
+        var nx = 40
+
+        myDiagram.add(
+            $(go.Part, {location: new go.Point(x, baseY) },
+                $(go.Shape, "Rectangle", {fill: "#ee9779", height: ny, width: nx})
+            )
+        );
+        myDiagram.add(
+            $(go.Part,
+            {location: new go.Point(x+50, baseY+3)},
+            $(go.TextBlock, "0-20%", 
+                { font: legendfont, stroke: "black"}))
+        );
+        myDiagram.add(
+            $(go.Part, {location: new go.Point(x, baseY-30) },
+                $(go.Shape, "Rectangle", {fill: "#ea7254", height: ny, width: nx})
+            )
+        );
+        myDiagram.add(
+            $(go.Part,
+            {location: new go.Point(x+50, baseY-30+3)},
+            $(go.TextBlock, "20-40%", 
+                { font: legendfont, stroke: "black"}))
+        );
+        myDiagram.add(
+            $(go.Part, {location: new go.Point(x, baseY-60) },
+                $(go.Shape, "Rectangle", {fill: "#dc4a38", height: ny, width: nx})
+            )
+        );
+        myDiagram.add(
+            $(go.Part,
+            {location: new go.Point(x+50, baseY-60+3)},
+            $(go.TextBlock, "40-60%", 
+                { font: legendfont, stroke: "black"}))
+        );
+        myDiagram.add(
+            $(go.Part, {location: new go.Point(x, baseY-90) },
+                $(go.Shape, "Rectangle", {fill: "#bb2f29", height: ny, width: nx})
+            )
+        );
+        myDiagram.add(
+            $(go.Part,
+            {location: new go.Point(x+50, baseY-90+3)},
+            $(go.TextBlock, "60-80%", 
+                { font: legendfont, stroke: "black"}))
+        );
+        myDiagram.add(
+            $(go.Part, {location: new go.Point(x, baseY-120) },
+                $(go.Shape, "Rectangle", {fill: "#8c1a18", height: ny, width: nx})
+            )
+        );
+        myDiagram.add(
+            $(go.Part,
+            {location: new go.Point(x+50, baseY-120+3)},
+            $(go.TextBlock, ">80%", 
+                { font: legendfont, stroke: "black"}))
+        );
+
+
+        myDiagram.add(
+            $(go.Part,
+            {location: new go.Point(x-20, baseY-150)},
+            $(go.TextBlock, "Run-time Percent",
+            {font: titlefont, stroke: "black"})
+            )
+        );
+
+        myDiagram.add(
+            $(go.Part, {location: new go.Point(x-10, baseY + 60)},
+                $(go.Shape, "RoundedTopRectangle", {fill: "#8c1a18", height: ny+5, width: nx+20})
+            )
+        )
+        myDiagram.add(
+            $(go.Part,
+            {location: new go.Point(x+55, baseY + 65)},
+            $(go.TextBlock, "Total time", 
+                { font: legendfont, stroke: "black"}))
+        );
+        myDiagram.add(
+            $(go.Part, {location: new go.Point(x-10, baseY + 85)},
+                $(go.Shape, "RoundedBottomRectangle", {fill: "#ee9779", height: ny+5, width: nx+20})
+            )
+        );
+        myDiagram.add(
+            $(go.Part,
+            {location: new go.Point(x+55, baseY + 90)},
+            $(go.TextBlock, "Self time", 
+                { font: legendfont, stroke: "black"}))
+        );
+
 
         this.diagram = myDiagram;
         this.updateModel();
@@ -238,8 +380,14 @@ export default {
                         called += " (" + fullNodeInfo[i].selfcalled + " selfcall)";
                     baseNodeArr[i].nodeInfoSelf += called;
                     baseNodeArr[i].nodeInfoWhole += called;
-                    drawNodeArr.push(baseNodeArr[i]);
+                    baseNodeArr[i].ifShow = 1;   
                 }
+                else {
+                    baseNodeArr[i].ifShow = 0.2;
+                    baseNodeArr[i].nodeInfoSelf = "";
+                    baseNodeArr[i].nodeInfoWhole = "";
+                }
+                drawNodeArr.push(baseNodeArr[i]);
             }
             
             var drawEdgeArr = [];
@@ -255,8 +403,13 @@ export default {
                     else
                         baseEdgeArr[i].calledInfo += " (" + baseEdgeArr[i].validTime.toFixed(2) + "s" + ")";
                     baseEdgeArr[i].ewidth = (maxEdgeWidth - minEdgeWidth) * (baseEdgeArr[i].validTime / graphTotalTime) + minEdgeWidth;
-                    drawEdgeArr.push(baseEdgeArr[i]);
-                } 
+                    baseNodeArr[i].ifShow = 1;
+                }
+                else {
+                    baseNodeArr[i].ifShow = 0.2;
+                    baseNodeArr[i].calledInfo = "";
+                }
+                drawEdgeArr.push(baseEdgeArr[i]);
             }
 
             this.diagram.model = new go.GraphLinksModel(
