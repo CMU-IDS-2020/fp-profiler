@@ -11,7 +11,7 @@
         </form>
         <button type="button" class="btn btn-primary" @click="uploadFile">Upload</button>
       </div>
-      <GoDiagram :modelData="diagramData" style="border: solid 1px black; width:100%; height:400px"></GoDiagram>
+      <fullButton :modelData="diagramData" ref='goDiagram' style="border: solid 1px black; width:100%; height:400px"></fullButton>
       <!-- <p> Response {{ response }} </p> -->
       <div id="vis"></div>
     </div>
@@ -22,7 +22,9 @@
 import axios from 'axios'
 import $ from 'jquery'
 import vegaEmbed from 'vega-embed'
-import GoDiagram from './components/GoDiagram.vue'
+// import GoDiagram from './components/GoDiagram.vue'
+// import halfButton from './components/half-button.vue'
+import fullButton from './components/full-button.vue'
 
 function obtainHighlightItems(view_) {
   return view_.scenegraph().root.items[0].items[1].items[0].items[1].items[0].items[1].items;
@@ -31,23 +33,36 @@ function obtainHighlightItems(view_) {
 export default {
   name: 'App',
   components: {
-    GoDiagram
+    fullButton
   },
   data() {
     return {
       file: null,
       response: ':)?',
       diagramData: {  // passed to <diagram> as its modelData
-        nodeDataArray: [
-          { key: 1, text: "Alpha", color: "lightblue" },
-          { key: 2, text: "Beta", color: "orange" },
-          { key: 3, text: "Gamma", color: "lightgreen" },
-          { key: 4, text: "Delta", color: "pink" }
+        fullNodeInfo: [
+            {"ID": 0, "name": "main", "selfTime": 0.0, "totalTime": 2.44, "parent": [], "child": [0, 1], "called": 1}, 
+            {"ID": 1, "name": "fb", "selfTime": 2.29, "totalTime": 2.29, "parent": [0, 2], "child": [2], "called": 1}, 
+            {"ID": 2, "name": "sum", "selfTime": 0.15, "totalTime": 0.15, "parent": [1], "child": [], "called": 1}
         ],
-        linkDataArray: [
-          { from: 1, to: 2 },
-          { from: 1, to: 3 },
-          { from: 3, to: 4 }
+
+        fullEdgeInfo: [
+            {"from": 0, "to": 1, "called": 1, "time": 2.29, "cTime": 2.29, "gcTime": 0.0}, 
+            {"from": 0, "to": 2, "called": 1, "time": 0.15, "cTime": 0.15, "gcTime": 0.0}, 
+            {"from": 1, "to": 1, "called": 331160280, "time": 0, "cTime": 0, "gcTime": 0}
+        ],
+
+
+        baseNodeArr: [
+            {"key": 0, "name": "main", "time": 0.0, "isExpanded": true, "percent": 1, "hide": false, "timePct": 0.0}, 
+            {"key": 1, "name": "fb", "time": 2.29, "isExpanded": true, "percent": 1, "hide": false, "timePct": 0.9385245901639344}, 
+            {"key": 2, "name": "sum", "time": 0.15, "isExpanded": true, "percent": 1, "hide": false, "timePct": 0.06147540983606557}
+        ],
+
+        baseEdgeArr:[
+            {"from": 0, "to": 1, "validcalled": 1, "validTime": 2.29, "validCTime": 2.29, "validGcTime": 0.0, "hide": false}, 
+            {"from": 0, "to": 2, "validcalled": 1, "validTime": 0.15, "validCTime": 0.15, "validGcTime": 0.0, "hide": false}, 
+            {"from": 1, "to": 1, "validcalled": 331160280, "validTime": 0, "validCTime": 0, "validGcTime": 0, "hide": false}
         ]
       },
     }
@@ -66,9 +81,19 @@ export default {
         cache: false,
         processData: false,
         success: response => {
+          console.log(response);
           this.response = response.vega_json;
+
+          // refresh the view of graph
+          this.diagramData.fullNodeInfo = response.fullNodeInfo;
+          this.diagramData.fullEdgeInfo = response.fullEdgeInfo;
+          this.diagramData.baseNodeArr = response.baseNodeArr;
+          this.diagramData.baseEdgeArr = response.baseEdgeArr;
+          this.$refs.goDiagram.updateModel();
+
           vegaEmbed('#vis', this.response).then(({spec, view}) => {
           this.vega_view = view;
+          
           // this.highlightLinesByFunc('access_by_col');
           // this.highlightLinesByFunc('access_by_row');
           // this.highlightLinesByLnum([15, 16, 17]);

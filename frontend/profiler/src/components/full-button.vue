@@ -10,7 +10,7 @@ import go from 'gojs'
 var $ = go.GraphObject.make;
 
 export default {
-    name: 'full-button',
+    name: 'fullButton',
     props: {
         modelData: Object
     },
@@ -173,7 +173,7 @@ export default {
             )
 
         this.diagram = myDiagram;
-        this.updateModel();
+        // this.updateModel();
 
     },
 

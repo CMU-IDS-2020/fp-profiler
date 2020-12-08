@@ -3,7 +3,7 @@ import os
 from subprocess import Popen, PIPE
 import json
 
-from prof_file_util import load_source, load_line_profile
+from prof_file_util import load_source, load_line_profile, load_graph_profile
 from linewise_barchart import linewise_barchart
 
 app = Flask(__name__)
@@ -74,6 +74,9 @@ def hello():
         stored somewhere serving as history data.
         '''
         ret_dict['vega_json'] = json.loads(chart.to_json())
+        graph_dct = load_graph_profile('graph_file')
+        for k, v in graph_dct.items():
+            ret_dict[k] = v
     else:
         ret_dict['vega_json'] = json.load(open('test.json', 'r'))
 

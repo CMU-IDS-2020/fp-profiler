@@ -10,9 +10,9 @@ import go from 'gojs'
 var $ = go.GraphObject.make;
 
 export default {
-    name: 'half-button',
+    name: 'halfButton',
     props: {
-        modelData: object
+        modelData: Object
     },
     mounted: function() {
         var self = this;
@@ -194,7 +194,7 @@ export default {
             )
 
         this.diagram = myDiagram;
-        this.updateModel();
+        // this.updateModel();
 
     },
     methods: {
