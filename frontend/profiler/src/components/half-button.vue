@@ -98,6 +98,7 @@ export default {
                     click: function(e, obj) {
                         var node = obj.part.adornedPart;
                         node.diagram.select(node);
+                        self.modelData.highlightFunc(node.data.name);
                     }
                     }),
                 // $("Button",
@@ -116,9 +117,8 @@ export default {
                     toEndSegmentLength: 50, fromEndSegmentLength: 40,
                     height: nodeHeight,
                     width: 200
-                },
+                    },
                 new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify),
-                new go.Binding("width", "width", function (val) {return val + 1}),
             
                 $(go.Panel,
                         $(go.Panel, "Auto",
@@ -129,7 +129,7 @@ export default {
                                     fill: "white",
                                     height: nodeHeight/2,
                                     width: 200-1,
-                                    opacity: 1
+                                    opacity: 1                                
                                 },
                                 new go.Binding("fill", "color"),
                                 new go.Binding("opacity", "width"),
@@ -162,7 +162,7 @@ export default {
                             },
                             new go.Binding("fill", "selfColor"),
                             new go.Binding("opacity", "ifShow"),
-                            new go.Binding("width", "widht")
+                            new go.Binding("width", "widht")    
                             ),
                             {
                                 toolTip: $("ToolTip",
@@ -204,6 +204,7 @@ export default {
                     },
                     new go.Binding("strokeWidth", "ewidth"),
                     new go.Binding("opacity", "ifShow")
+
                 ),
                 $(go.Shape,
                     {
@@ -380,7 +381,7 @@ export default {
                         called += " (" + fullNodeInfo[i].selfcalled + " selfcall)";
                     baseNodeArr[i].nodeInfoSelf += called;
                     baseNodeArr[i].nodeInfoWhole += called;
-                    baseNodeArr[i].ifShow = 1;   
+                    baseNodeArr[i].ifShow = 1; 
                 }
                 else {
                     baseNodeArr[i].ifShow = 0.2;
@@ -409,7 +410,7 @@ export default {
                     baseNodeArr[i].ifShow = 0.2;
                     baseNodeArr[i].calledInfo = "";
                 }
-                drawEdgeArr.push(baseEdgeArr[i]);
+                drawEdgeArr.push(baseEdgeArr[i]); 
             }
 
             this.diagram.model = new go.GraphLinksModel(
