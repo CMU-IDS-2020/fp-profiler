@@ -110,6 +110,8 @@ export default {
         item.opacity = 0.5;
         this.vega_view.dirty(item);
       }
+      // this.vega_view.loader();
+      this.vega_view.runAsync();
     },
     clearHighlightLines(items) {
       for (let item of items) {
