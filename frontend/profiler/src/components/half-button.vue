@@ -10,7 +10,7 @@ import go from 'gojs'
 var $ = go.GraphObject.make;
 
 export default {
-    name: 'half-button',
+    name: 'halfButton',
     props: {
         modelData: object
     },

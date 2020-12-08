@@ -1,5 +1,6 @@
 import pandas as pd
 import re
+from callgraph_json import extract, sort_node, generate_js_input
 
 def load_source(source_file):
     code_lines = []
@@ -85,6 +86,11 @@ def load_line_profile(source_file, prof_file):
         'Time': self_seconds,
         'Func': func_names
     })
+
+def load_graph_profile(graph_file):
+    total_edge, index_to_func, func_to_index = extract(graph_file)
+    node_list, edge_list = sort_node(total_edge, func_to_index, index_to_func)
+    return generate_js_input(node_list, edge_list)
     
 
 if __name__ == "__main__":

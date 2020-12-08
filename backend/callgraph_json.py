@@ -303,7 +303,7 @@ def sort_node(total_edge, func_to_index, index_to_func):
     return node_list, full_edge_info_whole_list 
 
 
-def generate_js_input(node_list, edge_list, output):
+def generate_js_input(node_list, edge_list, output=''):
     whole_js = {}
 
     json_fullNodeInfo = []
@@ -365,17 +365,19 @@ def generate_js_input(node_list, edge_list, output):
     whole_js["baseNodeArr"] = json_baseNodeArr
     whole_js["baseEdgeArr"] = json_baseEdgeArr
 
-    with open(output, 'w') as f:
-        f.write(json.dumps(whole_js))    
+    if output != '':
+        with open(output, 'w') as f:
+            f.write(json.dumps(whole_js))
 
-    
- 
-call_graph_path = '../data/call_graph.out'
-outfile_edge = '../data/graph_edge.json'
-outfile_node = '../data/graph_node.json'
-output = '../data/demo-4.json'
+    return whole_js    
+
+if __name__ == '__main__':    
+    call_graph_path = '../data/call_graph.out'
+    outfile_edge = '../data/graph_edge.json'
+    outfile_node = '../data/graph_node.json'
+    output = '../data/demo-4.json'
 
 
-total_edge, index_to_func, func_to_index = extract(call_graph_path)
-node_list, edge_list = sort_node(total_edge, func_to_index, index_to_func)
-generate_js_input(node_list, edge_list, output)
+    total_edge, index_to_func, func_to_index = extract(call_graph_path)
+    node_list, edge_list = sort_node(total_edge, func_to_index, index_to_func)
+    generate_js_input(node_list, edge_list, output)
