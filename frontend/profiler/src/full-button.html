@@ -21,6 +21,8 @@
             mounted: function() {
                 var self = this;
                 var smallfont = "bold 11pt Helvetica, Arial, sans-serif";
+                var legendfont = "11pt Helvetica, Arial, sans-serif";
+                var titlefont = "13pt Helvetica, Arial, sans-serif"
 
                 var myDiagram =
                     $(go.Diagram, this.$el,
@@ -58,7 +60,7 @@
                             new go.Binding("visible", "", function(node) { 
                                 var data = node.data; 
                                 if (!data.isExpanded) {
-                                    if (data.ifShow)
+                                    if (data.ifShow == 1)
                                         return true;
                                 }
                                 return false;
@@ -73,7 +75,7 @@
                             new go.Binding("visible", "", function(node) { 
                                 var data = node.data; 
                                 if (data.isExpanded) {
-                                    if (data.ifShow)
+                                    if (data.ifShow == 1)
                                         return true;
                                 }
                                 return false; 
@@ -220,35 +222,76 @@
                         }
                     )
 
-                // myDiagram.grid.visible = true;
+                
+                var x= -200;
+                var baseY = 150;
+                var ny = 20;
+                var nx = 40
 
-                // myDiagram.add(
-                //     $(go.Node, "Vertical",
-                //         {position: new go.Point(-100,0)},
-                //         $(go.Shape,
-                //             {
-                //                 figure: "Rectangle",
-                //                 fill: "lightblue",
-                //                 height: 20,
-                //                 width: 40
-                //             }
-                //         )
-                //     )
-                // )
+                myDiagram.add(
+                    $(go.Part, {location: new go.Point(x, baseY) },
+                        $(go.Shape, "Rectangle", {fill: "#ee9779", height: ny, width: nx})
+                    )
+                );
+                myDiagram.add(
+                    $(go.Part,
+                    {location: new go.Point(x+50, baseY+3)},
+                    $(go.TextBlock, "0-20%", 
+                        { font: legendfont, stroke: "black"}))
+                );
+                myDiagram.add(
+                    $(go.Part, {location: new go.Point(x, baseY-30) },
+                        $(go.Shape, "Rectangle", {fill: "#ea7254", height: ny, width: nx})
+                    )
+                );
+                myDiagram.add(
+                    $(go.Part,
+                    {location: new go.Point(x+50, baseY-30+3)},
+                    $(go.TextBlock, "20-40%", 
+                        { font: legendfont, stroke: "black"}))
+                );
+                myDiagram.add(
+                    $(go.Part, {location: new go.Point(x, baseY-60) },
+                        $(go.Shape, "Rectangle", {fill: "#dc4a38", height: ny, width: nx})
+                    )
+                );
+                myDiagram.add(
+                    $(go.Part,
+                    {location: new go.Point(x+50, baseY-60+3)},
+                    $(go.TextBlock, "40-60%", 
+                        { font: legendfont, stroke: "black"}))
+                );
+                myDiagram.add(
+                    $(go.Part, {location: new go.Point(x, baseY-90) },
+                        $(go.Shape, "Rectangle", {fill: "#bb2f29", height: ny, width: nx})
+                    )
+                );
+                myDiagram.add(
+                    $(go.Part,
+                    {location: new go.Point(x+50, baseY-90+3)},
+                    $(go.TextBlock, "60-80%", 
+                        { font: legendfont, stroke: "black"}))
+                );
+                myDiagram.add(
+                    $(go.Part, {location: new go.Point(x, baseY-120) },
+                        $(go.Shape, "Rectangle", {fill: "#8c1a18", height: ny, width: nx})
+                    )
+                );
+                myDiagram.add(
+                    $(go.Part,
+                    {location: new go.Point(x+50, baseY-120+3)},
+                    $(go.TextBlock, ">80%", 
+                        { font: legendfont, stroke: "black"}))
+                );
 
-                // myDiagram.add(
-                //     $(go.Node, "Vertical",
-                //         {position: new go.Point(0,0)},
-                //         $(go.Shape,
-                //             {
-                //                 figure: "Rectangle",
-                //                 fill: "pink",
-                //                 height: 20,
-                //                 width: 40
-                //             }
-                //         )
-                //     )
-                // )
+
+                myDiagram.add(
+                    $(go.Part,
+                    {location: new go.Point(x-20, baseY-150)},
+                    $(go.TextBlock, "Run-time Percent",
+                    {font: titlefont, stroke: "black"})
+                    )
+                );
 
                 this.diagram = myDiagram;
                 this.updateModel();
@@ -294,7 +337,7 @@
                             baseNodeArr[i].ifShow = 1;
                         }
                         else {
-                            baseNodeArr[i].ifShow = 0;
+                            baseNodeArr[i].ifShow = 0.2;
                             baseNodeArr[i].text = "";
                         }
                         drawNodeArr.push(baseNodeArr[i]);
@@ -316,7 +359,7 @@
                             baseEdgeArr[i].ifShow = 1;
                             } 
                         else {
-                            baseEdgeArr[i].ifShow = 0;
+                            baseEdgeArr[i].ifShow = 0.2;
                             baseEdgeArr[i].calledInfo = "";
                         }
                         drawEdgeArr.push(baseEdgeArr[i]);
