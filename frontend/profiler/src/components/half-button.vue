@@ -77,6 +77,7 @@ export default {
                     click: function(e, obj) {
                         var node = obj.part.adornedPart;
                         node.diagram.select(node);
+                        self.modelData.highlightFunc(node.data.name);
                     }
                     }),
                 $("Button",

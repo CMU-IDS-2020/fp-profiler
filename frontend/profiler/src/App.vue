@@ -63,7 +63,9 @@ export default {
             {"from": 0, "to": 1, "validcalled": 1, "validTime": 2.29, "validCTime": 2.29, "validGcTime": 0.0, "hide": false}, 
             {"from": 0, "to": 2, "validcalled": 1, "validTime": 0.15, "validCTime": 0.15, "validGcTime": 0.0, "hide": false}, 
             {"from": 1, "to": 1, "validcalled": 331160280, "validTime": 0, "validCTime": 0, "validGcTime": 0, "hide": false}
-        ]
+        ],
+        // supplied later in execution.
+        highlightFunc: undefined,
       },
     }
   },
@@ -89,6 +91,7 @@ export default {
           this.diagramData.fullEdgeInfo = response.fullEdgeInfo;
           this.diagramData.baseNodeArr = response.baseNodeArr;
           this.diagramData.baseEdgeArr = response.baseEdgeArr;
+          this.diagramData.highlightFunc = this.highlightLinesByFunc.bind(this)
           this.$refs.goDiagram.updateModel();
 
           vegaEmbed('#vis', this.response).then(({spec, view}) => {
