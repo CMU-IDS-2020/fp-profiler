@@ -21,39 +21,65 @@
             mounted: function() {
                 var self = this;
                 var smallfont = "bold 11pt Helvetica, Arial, sans-serif";
+                var legendfont = "11pt Helvetica, Arial, sans-serif";
+                var titlefont = "13pt Helvetica, Arial, sans-serif"
 
                 var myDiagram =
                     $(go.Diagram, this.$el,
                     {
                         layout: $(go.LayeredDigraphLayout, { isInitial: false, isOngoing: false, layerSpacing: 50 }),
                         hoverDelay: 100,
+                        allowMove: true,
                         "undoManager.isEnabled": true,
                         "toolManager.mouseWheelBehavior": go.ToolManager.WheelZoom,
                         "ChangedSelection": function(e) { self.$emit("changed-selection", e); }
                     });
+                
+                myDiagram.animationManager.initialAnimationStyle = go.AnimationManager.None;
 
                 /* Define adornment template */
                 var defaultAdornment =
                     $(
                         go.Adornment, "Spot",
                         $(go.Panel, "Auto",
-                            $(go.Shape, { fill: null, stroke: "dodgerblue", strokeWidth: 4 }),
+                            $(go.Shape, 
+                                { 
+                                    fill: null, 
+                                    stroke: "dodgerblue", 
+                                    strokeWidth: 4,
+                                    opacity: 1
+                                },
+                                new go.Binding("opacity", "ifShow")),
                             $(go.Placeholder)),
                         // the button to create a "next" node, at the top-right corner
                         $("Button",
                             {
-                            alignment: go.Spot.TopRight,
-                            click: this.expand_button
+                                alignment: go.Spot.TopRight,
+                                click: this.expand_button
                             },  // this function is defined below
-                            new go.Binding("visible", "", function(node) { var data = node.data; return !data.isExpanded; }).ofObject(),
+                            new go.Binding("visible", "", function(node) { 
+                                var data = node.data; 
+                                if (!data.isExpanded) {
+                                    if (data.ifShow == 1)
+                                        return true;
+                                }
+                                return false;
+                            }).ofObject(),
                             $(go.Shape, "PlusLine", { desiredSize: new go.Size(6, 6) })
                         ),
                         $("Button",
                             {
-                            alignment: go.Spot.TopRight,
-                            click: this.collapse_button
+                                alignment: go.Spot.TopRight,
+                                click: this.collapse_button
                             },  // this function is defined below
-                            new go.Binding("visible", "", function(node) { var data = node.data; return data.isExpanded; }).ofObject(),
+                            new go.Binding("visible", "", function(node) { 
+                                var data = node.data; 
+                                if (data.isExpanded) {
+                                    if (data.ifShow == 1)
+                                        return true;
+                                }
+                                return false; 
+                            }).ofObject(),
                             $(go.Shape, "MinusLine", { desiredSize: new go.Size(6, 6) })
                         ),
                 );
@@ -77,12 +103,29 @@
                             click: function(e, obj) {
                                 var node = obj.part.adornedPart;
                                 node.diagram.select(node);
+                            },
+                            doubleClick: function(e, obj) {
+                                var node = obj.part.adornedPart;
+                                alert(node.data.name);
                             }
                             }),
-                        $("Button",
-                            { alignment: go.Spot.Right, alignmentFocus: go.Spot.Left },
-                            { click: function(e, obj) { alert("Show more info"); } },
-                            $(go.TextBlock, "Show more info"))
+                        // $("Button",
+                        //     { alignment: go.Spot.Right, alignmentFocus: go.Spot.Left },
+                        //     { click: function(e, obj) {
+                        //         var node = obj.part.adornedPart; 
+                        //         if (node.data.ifShow)
+                        //             alert("Show more info"); } },
+                        //     $(go.TextBlock, 
+                        //         new go.Binding("text", function(node) {
+                        //             if (node.part.adornedPart.data.ifShow)
+                        //                 return "Show more info";
+                        //             return "";
+                        //         })),
+                        //     new go.Binding("visible", "", function(node) { 
+                        //         var data = node.part.adornedPart.data; 
+                        //         return data.ifShow; 
+                        //     }).ofObject()
+                        //     )
                     );
 
                 /* Define node template*/
@@ -104,9 +147,11 @@
                                 //fromLinkable: false, toLinkable: false, 
                                 cursor: "pointer",
                                 toEndSegmentLength: 50, fromEndSegmentLength: 40,
-                                height: 60
+                                height: 60,
+                                opacity: 1
                             },
-                                new go.Binding("fill", "color")
+                                new go.Binding("fill", "color"),
+                                new go.Binding("opacity", "ifShow")
                             ),
                             
                         $(go.TextBlock, "Function",
@@ -114,9 +159,11 @@
                                 margin: 12,
                                 font: smallfont,
                                 editable: true,
-                                textAlign: 'center'
+                                textAlign: 'center',
+                                opacity: 1
                             },
                             new go.Binding("text", "name").makeTwoWay()),
+                            new go.Binding('opacity', 'ifShow'),
                             { // show the Adornment when a mouseHover event occurs
                                 mouseHover: function(e, obj) {
                                     var node = obj.part;
@@ -148,16 +195,20 @@
                         {curve: go.Link.Bezier},
                         $(go.Shape,
                             {
-                                stroke: "#2F4F4F"
+                                stroke: "#2F4F4F",
+                                opacity: 1
                             },
-                            new go.Binding("strokeWidth", "ewidth")
+                            new go.Binding("strokeWidth", "ewidth"),
+                            new go.Binding('opacity', 'ifShow')
                         ),
                         $(go.Shape,
                             {
                                 toArrow: 'standard', 
                                 fill: "#2F4F4F", 
-                                scale: 1
-                            }
+                                scale: 1,
+                                opacity: 1
+                            },
+                            new go.Binding('opacity', 'ifShow')
                         ),
                         {
                         toolTip: $("ToolTip",
@@ -174,6 +225,77 @@
                             )
                         }
                     )
+
+                
+                var x= -200;
+                var baseY = 150;
+                var ny = 20;
+                var nx = 40
+
+                myDiagram.add(
+                    $(go.Part, {location: new go.Point(x, baseY) },
+                        $(go.Shape, "Rectangle", {fill: "#ee9779", height: ny, width: nx})
+                    )
+                );
+                myDiagram.add(
+                    $(go.Part,
+                    {location: new go.Point(x+50, baseY+3)},
+                    $(go.TextBlock, "0-20%", 
+                        { font: legendfont, stroke: "black"}))
+                );
+                myDiagram.add(
+                    $(go.Part, {location: new go.Point(x, baseY-30) },
+                        $(go.Shape, "Rectangle", {fill: "#ea7254", height: ny, width: nx})
+                    )
+                );
+                myDiagram.add(
+                    $(go.Part,
+                    {location: new go.Point(x+50, baseY-30+3)},
+                    $(go.TextBlock, "20-40%", 
+                        { font: legendfont, stroke: "black"}))
+                );
+                myDiagram.add(
+                    $(go.Part, {location: new go.Point(x, baseY-60) },
+                        $(go.Shape, "Rectangle", {fill: "#dc4a38", height: ny, width: nx})
+                    )
+                );
+                myDiagram.add(
+                    $(go.Part,
+                    {location: new go.Point(x+50, baseY-60+3)},
+                    $(go.TextBlock, "40-60%", 
+                        { font: legendfont, stroke: "black"}))
+                );
+                myDiagram.add(
+                    $(go.Part, {location: new go.Point(x, baseY-90) },
+                        $(go.Shape, "Rectangle", {fill: "#bb2f29", height: ny, width: nx})
+                    )
+                );
+                myDiagram.add(
+                    $(go.Part,
+                    {location: new go.Point(x+50, baseY-90+3)},
+                    $(go.TextBlock, "60-80%", 
+                        { font: legendfont, stroke: "black"}))
+                );
+                myDiagram.add(
+                    $(go.Part, {location: new go.Point(x, baseY-120) },
+                        $(go.Shape, "Rectangle", {fill: "#8c1a18", height: ny, width: nx})
+                    )
+                );
+                myDiagram.add(
+                    $(go.Part,
+                    {location: new go.Point(x+50, baseY-120+3)},
+                    $(go.TextBlock, ">80%", 
+                        { font: legendfont, stroke: "black"}))
+                );
+
+
+                myDiagram.add(
+                    $(go.Part,
+                    {location: new go.Point(x-20, baseY-150)},
+                    $(go.TextBlock, "Run-time Percent",
+                    {font: titlefont, stroke: "black"})
+                    )
+                );
 
                 this.diagram = myDiagram;
                 this.updateModel();
@@ -216,13 +338,18 @@
                             baseNodeArr[i].text += "Call from other: " + fullNodeInfo[i].called;
                             if (fullNodeInfo[i].selfcalled)
                                 baseNodeArr[i].text += "\nCall from self: " + fullNodeInfo[i].selfcalled;
-                            drawNodeArr.push(baseNodeArr[i]);
+                            baseNodeArr[i].ifShow = 1;
                         }
+                        else {
+                            baseNodeArr[i].ifShow = 0.2;
+                            baseNodeArr[i].text = "";
+                        }
+                        drawNodeArr.push(baseNodeArr[i]);
                     }
                     
                     var drawEdgeArr = [];
                     for (i = 0; i < baseEdgeArr.length; i++) {
-                    if (baseEdgeArr[i].hide == false) {
+                        if (baseEdgeArr[i].hide == false) {
                             var estimate = "";
                             if (Math.abs(baseEdgeArr[i].validTime - fullEdgeInfo[i].time) > 1e-5)
                                 estimate = "Estimated ";
@@ -233,8 +360,13 @@
                             else
                                 baseEdgeArr[i].calledInfo += " (" + baseEdgeArr[i].validTime.toFixed(2) + "s" + ")";
                             baseEdgeArr[i].ewidth = (maxEdgeWidth - minEdgeWidth) * (baseEdgeArr[i].validTime / graphTotalTime) + minEdgeWidth;
-                            drawEdgeArr.push(baseEdgeArr[i]);
-                        } 
+                            baseEdgeArr[i].ifShow = 1;
+                            } 
+                        else {
+                            baseEdgeArr[i].ifShow = 0.2;
+                            baseEdgeArr[i].calledInfo = "";
+                        }
+                        drawEdgeArr.push(baseEdgeArr[i]);
                     }
                     
                     this.diagram.model = new go.GraphLinksModel(
@@ -533,28 +665,34 @@
             data: {
                 diagramData: {  // passed to <diagram> as its modelData
                     fullNodeInfo: [
-                        {"ID": 0, "name": "main", "selfTime": 0.0, "totalTime": 2.44, "parent": [], "child": [0, 1], "called": 1}, 
-                        {"ID": 1, "name": "fb", "selfTime": 2.29, "totalTime": 2.29, "parent": [0, 2], "child": [2], "called": 1}, 
-                        {"ID": 2, "name": "sum", "selfTime": 0.15, "totalTime": 0.15, "parent": [1], "child": [], "called": 1}
-                    ],
-
-                    fullEdgeInfo: [
-                        {"from": 0, "to": 1, "called": 1, "time": 2.29, "cTime": 2.29, "gcTime": 0.0}, 
-                        {"from": 0, "to": 2, "called": 1, "time": 0.15, "cTime": 0.15, "gcTime": 0.0}, 
-                        {"from": 1, "to": 1, "called": 331160280, "time": 0, "cTime": 0, "gcTime": 0}
-                    ],
-        
+                        {"ID": 0, "name": "main", "selfTime": 0.0, "totalTime": 3.65, "parent": [], "child": [0], "called": 1}, 
+                        {"ID": 1, "name": "do_task", "selfTime": 0.0, "totalTime": 3.65, "parent": [0], "child": [1, 2, 3], "called": 1}, 
+                        {"ID": 2, "name": "access_by_col", "selfTime": 2.93, "totalTime": 2.93, "parent": [1], "child": [], "called": 102400}, 
+                        {"ID": 3, "name": "recursive_factorial", "selfTime": 0.39, "totalTime": 0.39, "parent": [2, 4], "child": [4], "called": 102400}, 
+                        {"ID": 4, "name": "access_by_row", "selfTime": 0.33, "totalTime": 0.33, "parent": [3], "child": [], "called": 102400}],
 
                     baseNodeArr: [
                         {"key": 0, "name": "main", "time": 0.0, "isExpanded": true, "percent": 1, "hide": false, "timePct": 0.0}, 
-                        {"key": 1, "name": "fb", "time": 2.29, "isExpanded": true, "percent": 1, "hide": false, "timePct": 0.9385245901639344}, 
-                        {"key": 2, "name": "sum", "time": 0.15, "isExpanded": true, "percent": 1, "hide": false, "timePct": 0.06147540983606557}
+                        {"key": 1, "name": "do_task", "time": 0.0, "isExpanded": true, "percent": 1, "hide": false, "timePct": 0.0}, 
+                        {"key": 2, "name": "access_by_col", "time": 2.93, "isExpanded": true, "percent": 1, "hide": false, "timePct": 0.8027397260273973}, 
+                        {"key": 3, "name": "recursive_factorial", "time": 0.39, "isExpanded": true, "percent": 1, "hide": false, "timePct": 0.10684931506849316}, 
+                        {"key": 4, "name": "access_by_row", "time": 0.33, "isExpanded": true, "percent": 1, "hide": false, "timePct": 0.09041095890410959}],
+        
+
+                    fullEdgeInfo: [
+                        {"from": 0, "to": 1, "called": 1, "time": 3.65, "cTime": 0.0, "gcTime": 3.65}, 
+                        {"from": 1, "to": 2, "called": 102400, "time": 2.93, "cTime": 2.93, "gcTime": 0.0}, 
+                        {"from": 1, "to": 3, "called": 102400, "time": 0.39, "cTime": 0.39, "gcTime": 0.0}, 
+                        {"from": 1, "to": 4, "called": 102400, "time": 0.33, "cTime": 0.33, "gcTime": 0.0}, 
+                        {"from": 3, "to": 3, "called": 104755200, "time": 0.78, "cTime": 0.39, "gcTime": 0.39}
                     ],
 
                     baseEdgeArr:[
-                        {"from": 0, "to": 1, "validcalled": 1, "validTime": 2.29, "validCTime": 2.29, "validGcTime": 0.0, "hide": false}, 
-                        {"from": 0, "to": 2, "validcalled": 1, "validTime": 0.15, "validCTime": 0.15, "validGcTime": 0.0, "hide": false}, 
-                        {"from": 1, "to": 1, "validcalled": 331160280, "validTime": 0, "validCTime": 0, "validGcTime": 0, "hide": false}
+                        {"from": 0, "to": 1, "validcalled": 1, "validTime": 3.65, "validCTime": 0.0, "validGcTime": 3.65, "hide": false}, 
+                        {"from": 1, "to": 2, "validcalled": 102400, "validTime": 2.93, "validCTime": 2.93, "validGcTime": 0.0, "hide": false}, 
+                        {"from": 1, "to": 3, "validcalled": 102400, "validTime": 0.39, "validCTime": 0.39, "validGcTime": 0.0, "hide": false}, 
+                        {"from": 1, "to": 4, "validcalled": 102400, "validTime": 0.33, "validCTime": 0.33, "validGcTime": 0.0, "hide": false}, 
+                        {"from": 3, "to": 3, "validcalled": 104755200, "validTime": 0.78, "validCTime": 0.39, "validGcTime": 0.39, "hide": false}
                     ]
                 },
                 currentNode: null
@@ -572,6 +710,19 @@
                     set: function(val) {
 
                     }
+                },
+                currentNodeInfo: {
+                    get: function() {
+                        var node = this.currentNode;
+                        if (node instanceof go.Node) {
+                            return node.data.text;
+                        } else {
+                            return "";
+                        }
+                    },
+                    set: function(val) {
+
+                    }
                 }
             },
             methods: {
@@ -581,11 +732,13 @@
                 changedSelection: function(e) {
                     var node = e.diagram.selection.first();
                     if (node instanceof go.Node) {
-                    this.currentNode = node;
-                    this.currentNodeText = node.data.text;
+                        this.currentNode = node;
+                        this.currentNodeText = node.data.name;
+                        this.currentNodeInfo = node.data.text;
                     } else {
-                    this.currentNode = null;
-                    this.currentNodeText = "";
+                        this.currentNode = null;
+                        this.currentNodeText = "";
+                        this.currentNodeInfo = "";
                     }
                 },
 
@@ -606,7 +759,9 @@
              v-on:changed-selection="changedSelection"
              style="border: solid 1px black; width:100%; height:400px"></diagram>
     <br/>Current Function:
-    <input v-model.lazy="currentNodeText" v-bind:disabled="currentNode === null"/>
+    <input v-model.lazy="currentNodeText" v-bind:disabled="currentNode === null" readonly="true"/>
+    <br/>Current Function Information:
+    <textarea v-model.lazy='currentNodeInfo' v-bind:disabled="currentNode === null" readonly="true" cols=30/>
 
   </div>
 </body>
