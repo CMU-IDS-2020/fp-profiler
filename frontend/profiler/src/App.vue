@@ -23,12 +23,10 @@
         <CodeInput @response="handleResponse"></CodeInput>
       </div>
       <div v-else>
-        <h2>linewise CPU usage: </h2>
+        <h2>Your CPU usage: </h2>
+        <fullButton :modelData="diagramData" ref='goDiagram' style="border: solid 1px black; width:100%; height:400px"></fullButton>
         <div id="vis"></div>
       </div>
-      <fullButton :modelData="diagramData" ref='goDiagram' style="border: solid 1px black; width:100%; height:400px"></fullButton>
-      <!-- <p> Response {{ response }} </p> -->
-      <div id="vis"></div>
     </div>
   </div>
 </template>
@@ -55,7 +53,7 @@ function locateFuncName(baseNodeArr, idx) {
 export default {
   name: 'App',
   components: {
-    fullButton
+    fullButton,
     CodeInput
   },
   data() {
@@ -112,7 +110,6 @@ export default {
       // console.log(this.funcNameCalleeGraph);
 
       this.diagramData.highlightFunc = this.highlightLinesByFunc.bind(this)
-      this.$refs.goDiagram.updateModel();
 
       vegaEmbed('#vis', this.response).then(({spec, view}) => {
       this.vega_view = view;
@@ -120,6 +117,8 @@ export default {
       // this.highlightLinesByFunc('access_by_col');
       // this.highlightLinesByFunc('access_by_row');
       // this.highlightLinesByLnum([15, 16, 17]);
+      console.log(this.$refs);
+      this.$refs['goDiagram'].updateModel();
       });
     },
     buildFuncCallerGraph() {

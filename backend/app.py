@@ -29,7 +29,7 @@ def hello():
     }
     '''
     code = request.get_json()['code']
-    print(code)
+    # print(code)
     local_path = 'temp.c' # TODO: hash file names to handle concurrency issues
     with open(local_path, 'w') as f:
         f.write(code)
@@ -38,7 +38,7 @@ def hello():
     (output, err) = process.communicate()
     exit_code = process.wait()
 
-    print(output)
+    # print(output)
     # with open('test.json') as f:
     #     s = json.load(f)
 
@@ -48,11 +48,11 @@ def hello():
     Invoke compiler (if need) and profiler to generate the results.
     '''
     os.system('clang-format -i {}'.format(local_path))
-    compile_retvalue = os.system('gcc -g -pg {} -o prog > gcc_output'.format(local_path))
+    compile_retvalue = os.system('gcc -g -pg {} -o prog 1> gcc_output 2>&1'.format(local_path))
     # handle compiling error
     if compile_retvalue != 0:
         ret_dict['error'] = 1
-        ret_dict['source'] = ''.join(load_source(local_path))
+        ret_dict['source'] = ''.join(list(open(local_path, 'r').readlines()))
         ret_dict['error_message'] = ''.join(list(open('gcc_output', 'r').readlines()))
         # fixme: following for local debug purpose, chart can be obtained.
         df = load_line_profile(local_path, 'linewise_file')
@@ -65,9 +65,9 @@ def hello():
         return ret_dict
 
     os.system('./prog')
-    os.system('ctags --fields=+ne -o - --sort=no {} > ctags_output'.format(local_path))
-    os.system('gprof --graph prog gmon.out  > graph_file')
-    os.system('gprof -l prog gmon.out  > linewise_file')
+    os.system('ctags --fields=+ne -o - --sort=no {} 1> ctags_output 2>&1'.format(local_path))
+    os.system('gprof --graph prog gmon.out 1> graph_file 2>&1')
+    os.system('gprof -l prog gmon.out 1> linewise_file 2>&1')
 
     os.system('gcc -pedantic -g {} -o exec'.format(local_path))
     os.system('valgrind ./exec > valgrind.txt')
@@ -95,6 +95,6 @@ def hello():
             ret_dict[k] = v
     else:
         ret_dict['vega_json'] = json.load(open('test.json', 'r'))
-    print(uninitialised_buffer, invalid_write_buffer, mem_leak_dic)
+    # print(uninitialised_buffer, invalid_write_buffer, mem_leak_dic)
 
     return ret_dict

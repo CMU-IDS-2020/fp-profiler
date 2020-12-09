@@ -58,10 +58,11 @@ export default {
           console.log(response.data);
           this.error = true;
           this.errorMessage = response.data.error_message;
+          this.editor.setValue(response.data.source)
         } else {
           this.error = false;
           this.errorMessage = '';
-          this.$emit('response', response.data.vega_json);
+          this.$emit('response', response.data);
         }
       }).catch(function (error) {
         console.log(error);
