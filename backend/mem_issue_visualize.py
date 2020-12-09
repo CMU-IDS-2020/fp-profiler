@@ -10,7 +10,7 @@ def mem_issue_visualize(source_path, uninitialised_buffer, invalid_write_buffer,
     df = pd.DataFrame({'Source': source_list, 'Line Number': list(range(1, len(source_list) + 1))})
     df['Y'] = (len(df) - df['Line Number'] + 1) * line_width
     df['X'] = code_panel_width
-    df['X2'] = 0.0
+    df['X2'] = -code_panel_width
     df['Y2'] = (len(df) - df['Line Number']) * line_width
     df['Y_mid'] = (df['Y'] + df['Y2']) / 2.0
 
@@ -38,15 +38,14 @@ def mem_issue_visualize(source_path, uninitialised_buffer, invalid_write_buffer,
     issue_df = pd.DataFrame({'Line Number': line_num_buffer, 'Type': type_buffer, 'Leak Bytes': mem_leak_bytes})
     issue_df['Y'] = (len(df) - issue_df['Line Number'] + 1) * line_width
     issue_df['X'] = code_panel_width
-    issue_df['X2'] = 0.0
+    issue_df['X2'] = -code_panel_width
     issue_df['Y2'] = (len(df) - issue_df['Line Number']) * line_width
     issue_df['Y_mid'] = (issue_df['Y'] + issue_df['Y2']) / 2.0
 
-    print(issue_df)
 
     issue_selector = alt.binding_select(options=['uninitialized','invalid write','memleak'])
     issue_selection = alt.selection_single(fields=['Type'], bind=issue_selector, name='Choose Memory Issue Type: ')
-
+    
     rect_plot = alt.Chart(issue_df).mark_rect(color='red').encode(
         alt.X('X:Q', axis=None),
         alt.Y('Y:Q', axis=None),
@@ -54,6 +53,7 @@ def mem_issue_visualize(source_path, uninitialised_buffer, invalid_write_buffer,
         alt.Y2('Y2:Q'),
         alt.Tooltip('Leak Bytes:N', title='Leaked Memory in Bytes')
     ).add_selection(issue_selection).transform_filter(issue_selection)
+
     
     return alt.layer(rect_plot, text_plot).properties(width=code_panel_width, height=(len(df) + 1) * line_width)
 
