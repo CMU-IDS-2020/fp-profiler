@@ -1,6 +1,6 @@
 import re
 import numpy as np
-def extrace_valgrind_result(mode, f_res):
+def extract_valgrind_result(mode, f_res):
     try:
         if mode == "memory_leak":
             with open(f_res) as f:
