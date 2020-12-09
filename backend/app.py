@@ -8,7 +8,6 @@ from linewise_barchart import linewise_barchart
 
 app = Flask(__name__)
 
-
 @app.route('/upload-file', methods = ['POST'])
 def hello():
     '''
@@ -61,6 +60,12 @@ def hello():
     os.system('gprof --graph prog gmon.out  > graph_file')
     os.system('gprof -l prog gmon.out  > linewise_file')
 
+    os.system('gcc -pedantic -g {} -o exec'.format(local_path))
+    os.system('valgrind ./exec > valgrind.txt')
+    uninitialised_buffer, invalid_write_buffer = extract_valgrind_result('other', 'valgrind.txt')
+    os.system('valgrind --leak-check=full ./exec > valgrind_leak.txt')
+    mem_leak_dic = extract_valgrind_result('memory_leak', 'valgrind_leak.txt')
+
     '''
     Now we have the outputs. Visualize and pass it back to the frontend.
     '''
@@ -78,5 +83,6 @@ def hello():
         ret_dict['vega_json'] = json.loads(chart.to_json())
     else:
         ret_dict['vega_json'] = json.load(open('test.json', 'r'))
+    print(uninitialised_buffer, invalid_write_buffer, mem_leak_dic)
 
     return ret_dict
