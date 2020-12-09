@@ -24,7 +24,7 @@
       </div>
       <div v-else-if="!initState && viewType == 'cpu'">
         <h2>Your CPU usage: </h2>
-        <div class="mb-3">
+        <div v-if="hasCallGraph" class="mb-3">
           <fullButton :modelData="diagramData" ref='goDiagram' style="border: solid 1px black; width:100%; height:400px"></fullButton>
         </div>
       </div>
@@ -67,6 +67,7 @@ export default {
     return {
       initState: true,
       viewType: 'cpu',
+      hasCallGraph: false,
       diagramData: {  // passed to <diagram> as its modelData
         fullNodeInfo: [
             {"ID": 0, "name": "main", "selfTime": 0.0, "totalTime": 2.44, "parent": [], "child": [0, 1], "called": 1}, 
@@ -102,29 +103,37 @@ export default {
       this.initState = true;
     },
     handleResponse(response) {
+      console.log(response);
       this.initState = false;
       this.response = response.vega_json;
       this.viewType = response.type;
       if (response.type == 'cpu') {
         // refresh the view of graph
-        this.diagramData.fullNodeInfo = response.fullNodeInfo;
-        this.diagramData.fullEdgeInfo = response.fullEdgeInfo;
-        this.diagramData.baseNodeArr = response.baseNodeArr;
-        this.diagramData.baseEdgeArr = response.baseEdgeArr;
-        this.funcNameCallerGraph = this.buildFuncCallerGraph();
-        this.funcNameCalleeGraph = this.buildFuncCalleeGraph();
-        // console.log(this.funcNameCallerGraph);
-        // console.log(this.funcNameCalleeGraph);
-        this.diagramData.highlightFunc = this.highlightLinesByFunc.bind(this)
-        vegaEmbed('#vis', this.response).then(({spec, view}) => {
-        this.vega_view = view;
-        // console.log(this.vega_view.scenegraph().root)
-        // this.highlightLinesByFunc('access_by_col');
-        // this.highlightLinesByFunc('access_by_row');
-        // this.highlightLinesByLnum([15, 16, 17]);
-        console.log(this.$refs);
-        this.$refs['goDiagram'].updateModel();
-        });
+        this.hasCallGraph = true;
+        for (let key of ['fullNodeInfo', 'fullEdgeInfo', 'baseNodeArr', 'baseEdgeArr']) {
+          if (!(key in response)) {
+            this.hasCallGraph = false;
+            break;
+          }
+        }
+        if (this.hasCallGraph) {
+          this.diagramData.fullNodeInfo = response.fullNodeInfo;
+          this.diagramData.fullEdgeInfo = response.fullEdgeInfo;
+          this.diagramData.baseNodeArr = response.baseNodeArr;
+          this.diagramData.baseEdgeArr = response.baseEdgeArr;
+          this.funcNameCallerGraph = this.buildFuncCallerGraph();
+          this.funcNameCalleeGraph = this.buildFuncCalleeGraph();
+          this.diagramData.highlightFunc = this.highlightLinesByFunc.bind(this)
+          vegaEmbed('#vis', this.response).then(({spec, view}) => {
+            this.vega_view = view;
+            console.log(this.$refs);
+            this.$refs['goDiagram'].updateModel();
+          });
+        } else {
+          vegaEmbed('#vis', this.response).then(({spec, view}) => {
+            this.vega_view = view;
+          });
+        }
       } else {
         vegaEmbed('#vis', this.response).then(({spec, view}) => {
           this.vega_view = view;
