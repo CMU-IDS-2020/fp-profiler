@@ -22,14 +22,18 @@
         <h6>Select your C code and/or edit the code in the editor: </h6>
         <CodeInput @response="handleResponse"></CodeInput>
       </div>
-      <div v-else-if="viewType == 'cpu'">
+      <div v-else-if="!initState && viewType == 'cpu'">
         <h2>Your CPU usage: </h2>
-        <fullButton :modelData="diagramData" ref='goDiagram' style="border: solid 1px black; width:100%; height:400px"></fullButton>
+        <div class="mb-3">
+          <fullButton :modelData="diagramData" ref='goDiagram' style="border: solid 1px black; width:100%; height:400px"></fullButton>
+        </div>
       </div>
       <div v-else>
         <h2>Your Mem usage: </h2>
       </div>
-      <div id="vis"></div>
+      <div v-if="!initState">
+        <div id="vis"></div>
+      </div>
     </div>
   </div>
 </template>
