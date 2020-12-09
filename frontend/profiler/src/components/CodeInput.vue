@@ -1,5 +1,23 @@
 <template>
+
   <div>
+
+    <div class="form-group">
+      <legend>Profiler option</legend>
+      <div class="form-check">
+        <label class="form-check-label">
+          <input type="radio" v-model="selectType" class="form-check-input" name="optionsRadios" :value="'cpu'">
+          CPU profiling
+        </label>
+      </div>
+      <div class="form-check">
+        <label class="form-check-label">
+          <input type="radio" v-model="selectType" class="form-check-input" name="optionsRadios" :value="'mem'">
+          Mem profiling
+        </label>
+      </div>
+    </div>
+
     <div class="row mb-3">
       <form class="col-6" id="upload-file" method="post" enctype="multipart/form-data">
         <div class="custom-file">
@@ -7,7 +25,7 @@
           <label class="custom-file-label" for="customFile"> {{ file ? file.name : "Select file..." }} </label>
         </div>
       </form>
-    <button type="button" class="btn btn-primary" @click="uploadFile">Upload</button>
+      <button type="button" class="btn btn-primary" @click="uploadFile">Upload</button>
     </div>
     <div class="card border border-dark mb-3" style="height: 610px; width: 810px;">
       <div ref="editor" style="height: 600px; width: 800px;"></div>
@@ -23,7 +41,8 @@
 <script>
 import axios from 'axios'
 import $ from 'jquery'
-import * as monaco from 'monaco-editor';
+import * as monaco from 'monaco-editor'
+import 'bootstrap/dist/js/bootstrap.bundle.js'
 
 export default {
   name: 'CodeInput',
@@ -33,6 +52,7 @@ export default {
       file: null,
       error: false,
       errorMessage: '',
+      selectType: 'cpu',
     }
   },
   methods: {
@@ -50,7 +70,11 @@ export default {
       fr.readAsText(this.file); 
     },
     uploadFile() {
-      axios.post('/upload-file', {
+      let postUrl = '/upload-file';
+      if (this.selectType != 'cpu') {
+        postUrl = '/mem-profile';
+      }
+      axios.post(postUrl, {
         code: this.editor.getValue(),
       }).then(response => {
         console.log(response);
@@ -62,7 +86,9 @@ export default {
         } else {
           this.error = false;
           this.errorMessage = '';
-          this.$emit('response', response.data);
+          let res = response.data;
+          res.type = this.selectType;
+          this.$emit('response', res);
         }
       }).catch(function (error) {
         console.log(error);

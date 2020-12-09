@@ -6,6 +6,9 @@ module.exports = {
     proxy: {
       "/upload-file": {
         target: "http://localhost:5000"
+      },
+      "/mem-profile": {
+        target: "http://localhost:5000"
       }
     }
   },
