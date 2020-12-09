@@ -1,15 +1,30 @@
 <template>
   <div id="app">
+
+    <div class="navbar navbar-expand-lg fixed-top navbar-light bg-light" style="">
+      <div class="container">
+        <div class="mr-auto">
+          <h1>Profiler</h1>
+        </div>
+        <div class="ml-auto">
+            <button class="btn btn-primary" :disabled="initState" v-on:click="moveBack">
+              <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-left-circle-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-4.5.5a.5.5 0 0 0 0-1H5.707l2.147-2.146a.5.5 0 1 0-.708-.708l-3 3a.5.5 0 0 0 0 .708l3 3a.5.5 0 0 0 .708-.708L5.707 8.5H11.5z"/>
+              </svg>
+              Back
+            </button>
+        </div>
+      </div>
+    </div>
+
     <div class="container">
-      <!-- upload a file -->
-      <div class="row">
-        <form class="col-6" id="upload-file" method="post" enctype="multipart/form-data">
-          <div class="custom-file">
-            <input @change="selectFile" type="file" name="file" class="custom-file-input" id="customFile">
-            <label class="custom-file-label" for="customFile"> {{ file ? file.name : "Select file..." }} </label>
-          </div>
-        </form>
-        <button type="button" class="btn btn-primary" @click="uploadFile">Upload</button>
+      <div v-if="initState" >
+        <h6>Select your C code and/or edit the code in the editor: </h6>
+        <CodeInput @response="handleResponse"></CodeInput>
+      </div>
+      <div v-else>
+        <h2>linewise CPU usage: </h2>
+        <div id="vis"></div>
       </div>
       <fullButton :modelData="diagramData" ref='goDiagram' style="border: solid 1px black; width:100%; height:400px"></fullButton>
       <!-- <p> Response {{ response }} </p> -->
@@ -22,9 +37,8 @@
 import axios from 'axios'
 import $ from 'jquery'
 import vegaEmbed from 'vega-embed'
-// import GoDiagram from './components/GoDiagram.vue'
-// import halfButton from './components/half-button.vue'
 import fullButton from './components/full-button.vue'
+import CodeInput from './components/CodeInput.vue'
 
 function obtainHighlightItems(view_) {
   return view_.scenegraph().root.items[0].items[1].items[0].items[1].items[0].items[1].items;
@@ -42,11 +56,11 @@ export default {
   name: 'App',
   components: {
     fullButton
+    CodeInput
   },
   data() {
     return {
-      file: null,
-      response: ':)?',
+      initState: true,
       diagramData: {  // passed to <diagram> as its modelData
         fullNodeInfo: [
             {"ID": 0, "name": "main", "selfTime": 0.0, "totalTime": 2.44, "parent": [], "child": [0, 1], "called": 1}, 
@@ -78,43 +92,34 @@ export default {
     }
   },
   methods: {
-    selectFile() {
-      this.file = $('#upload-file')[0][0].files[0];
+    moveBack() {
+      console.log("Hello");
+      this.initState = true;
     },
-    uploadFile() {
-      var form_data = new FormData($('#upload-file')[0]);
-      $.ajax({
-        type: 'POST',
-        url: '/upload-file',
-        data: form_data,
-        contentType: false,
-        cache: false,
-        processData: false,
-        success: response => {
-          // console.log(response);
-          this.response = response.vega_json;
+    handleResponse(response) {
+      this.initState = false;
+      // console.log(response);
+      this.response = response.vega_json;
 
-          // refresh the view of graph
-          this.diagramData.fullNodeInfo = response.fullNodeInfo;
-          this.diagramData.fullEdgeInfo = response.fullEdgeInfo;
-          this.diagramData.baseNodeArr = response.baseNodeArr;
-          this.diagramData.baseEdgeArr = response.baseEdgeArr;
-          this.funcNameCallerGraph = this.buildFuncCallerGraph();
-          this.funcNameCalleeGraph = this.buildFuncCalleeGraph();
-          // console.log(this.funcNameCallerGraph);
-          // console.log(this.funcNameCalleeGraph);
+      // refresh the view of graph
+      this.diagramData.fullNodeInfo = response.fullNodeInfo;
+      this.diagramData.fullEdgeInfo = response.fullEdgeInfo;
+      this.diagramData.baseNodeArr = response.baseNodeArr;
+      this.diagramData.baseEdgeArr = response.baseEdgeArr;
+      this.funcNameCallerGraph = this.buildFuncCallerGraph();
+      this.funcNameCalleeGraph = this.buildFuncCalleeGraph();
+      // console.log(this.funcNameCallerGraph);
+      // console.log(this.funcNameCalleeGraph);
 
-          this.diagramData.highlightFunc = this.highlightLinesByFunc.bind(this)
-          this.$refs.goDiagram.updateModel();
+      this.diagramData.highlightFunc = this.highlightLinesByFunc.bind(this)
+      this.$refs.goDiagram.updateModel();
 
-          vegaEmbed('#vis', this.response).then(({spec, view}) => {
-          this.vega_view = view;
-          // console.log(this.vega_view.scenegraph().root)
-          // this.highlightLinesByFunc('access_by_col');
-          // this.highlightLinesByFunc('access_by_row');
-          // this.highlightLinesByLnum([15, 16, 17]);
-        });
-        },
+      vegaEmbed('#vis', this.response).then(({spec, view}) => {
+      this.vega_view = view;
+      // console.log(this.vega_view.scenegraph().root)
+      // this.highlightLinesByFunc('access_by_col');
+      // this.highlightLinesByFunc('access_by_row');
+      // this.highlightLinesByLnum([15, 16, 17]);
       });
     },
     buildFuncCallerGraph() {
@@ -210,8 +215,13 @@ export default {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
+  /*text-align: center;*/
   color: #2c3e50;
   margin-top: 60px;
+}
+
+body { padding-top: 40px; }
+@media screen and (max-width: 768px) {
+    body { padding-top: 0px; }
 }
 </style>

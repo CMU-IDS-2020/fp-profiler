@@ -5,9 +5,9 @@ import json
 
 from prof_file_util import load_source, load_line_profile, load_graph_profile
 from linewise_barchart import linewise_barchart
+from valgrind import extract_valgrind_result
 
 app = Flask(__name__)
-
 
 @app.route('/upload-file', methods = ['POST'])
 def hello():
@@ -28,9 +28,11 @@ def hello():
         'error_message': the compile failure message
     }
     '''
-    file = request.files['file']
-    local_path = os.path.join('temp', file.filename)
-    file.save(local_path)
+    code = request.get_json()['code']
+    print(code)
+    local_path = 'temp.c' # TODO: hash file names to handle concurrency issues
+    with open(local_path, 'w') as f:
+        f.write(code)
 
     process = Popen(['wc', '-l', local_path], stdout=PIPE)
     (output, err) = process.communicate()
@@ -67,6 +69,12 @@ def hello():
     os.system('gprof --graph prog gmon.out  > graph_file')
     os.system('gprof -l prog gmon.out  > linewise_file')
 
+    os.system('gcc -pedantic -g {} -o exec'.format(local_path))
+    os.system('valgrind ./exec > valgrind.txt')
+    uninitialised_buffer, invalid_write_buffer = extract_valgrind_result('other', 'valgrind.txt')
+    os.system('valgrind --leak-check=full ./exec > valgrind_leak.txt')
+    mem_leak_dic = extract_valgrind_result('memory_leak', 'valgrind_leak.txt')
+
     '''
     Now we have the outputs. Visualize and pass it back to the frontend.
     '''
@@ -87,5 +95,6 @@ def hello():
             ret_dict[k] = v
     else:
         ret_dict['vega_json'] = json.load(open('test.json', 'r'))
+    print(uninitialised_buffer, invalid_write_buffer, mem_leak_dic)
 
     return ret_dict

@@ -9,13 +9,14 @@
   "dependencies": {
     "axios": "^0.21.0",
     "bootstrap": "^4.5.3",
-    "bootstrap-vue": "^2.20.1",
+    "bootswatch": "^4.5.3",
     "gojs": "^2.1.30",
+    "monaco-editor": "^0.21.2",
+    "monaco-editor-webpack-plugin": "^2.0.0",
     "vega": "^5.17.0",
     "vega-embed": "^6.13.0",
     "vega-lite": "^4.17.0",
-    "vue": "^2.6.12",
-    "vue-diagrams": "^0.0.1-development"
+    "vue": "^2.6.12"
   },
   "devDependencies": {
     "@vue/cli-service": "~4.5.0",
