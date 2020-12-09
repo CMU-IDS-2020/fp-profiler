@@ -52,6 +52,14 @@ def hello():
         ret_dict['error'] = 1
         ret_dict['source'] = ''.join(load_source(local_path))
         ret_dict['error_message'] = ''.join(list(open('gcc_output', 'r').readlines()))
+        # fixme: following for local debug purpose, chart can be obtained.
+        df = load_line_profile(local_path, 'linewise_file')
+        chart = linewise_barchart(df)
+        ret_dict['vega_json'] = json.loads(chart.to_json())
+        graph_dct = load_graph_profile('graph_file')
+        
+        for k, v in graph_dct.items():
+            ret_dict[k] = v
         return ret_dict
 
     os.system('./prog')

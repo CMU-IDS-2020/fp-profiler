@@ -30,6 +30,14 @@ function obtainHighlightItems(view_) {
   return view_.scenegraph().root.items[0].items[1].items[0].items[1].items[0].items[1].items;
 }
 
+function obtainSingleHighlightItems(view_) {
+  return view_.scenegraph().root.items[0].items[1].items[0].items[1].items[0].items[2].items;
+}
+
+function locateFuncName(baseNodeArr, idx) {
+  return baseNodeArr[idx].name;
+}
+
 export default {
   name: 'App',
   components: {
@@ -83,7 +91,7 @@ export default {
         cache: false,
         processData: false,
         success: response => {
-          console.log(response);
+          // console.log(response);
           this.response = response.vega_json;
 
           // refresh the view of graph
@@ -91,12 +99,17 @@ export default {
           this.diagramData.fullEdgeInfo = response.fullEdgeInfo;
           this.diagramData.baseNodeArr = response.baseNodeArr;
           this.diagramData.baseEdgeArr = response.baseEdgeArr;
+          this.funcNameCallerGraph = this.buildFuncCallerGraph();
+          this.funcNameCalleeGraph = this.buildFuncCalleeGraph();
+          // console.log(this.funcNameCallerGraph);
+          // console.log(this.funcNameCalleeGraph);
+
           this.diagramData.highlightFunc = this.highlightLinesByFunc.bind(this)
           this.$refs.goDiagram.updateModel();
 
           vegaEmbed('#vis', this.response).then(({spec, view}) => {
           this.vega_view = view;
-          
+          // console.log(this.vega_view.scenegraph().root)
           // this.highlightLinesByFunc('access_by_col');
           // this.highlightLinesByFunc('access_by_row');
           // this.highlightLinesByLnum([15, 16, 17]);
@@ -104,10 +117,47 @@ export default {
         },
       });
     },
-    highlightLines(items) {
+    buildFuncCallerGraph() {
+        let funcNameGraph = new Object();
+        for (let edge of this.diagramData.baseEdgeArr) {
+            let name = locateFuncName(this.diagramData.baseNodeArr, edge.from);
+            if (!(name in funcNameGraph)) {
+              funcNameGraph[name] = new Array();
+            }
+            let name2 = locateFuncName(this.diagramData.baseNodeArr, edge.to);
+            funcNameGraph[name].push(name2);
+        }
+
+        for (let node of this.diagramData.baseNodeArr) {
+          if (!(node.name in funcNameGraph)) {
+            funcNameGraph[node.name] = new Array();
+          }
+        }
+        return funcNameGraph;
+    },
+    buildFuncCalleeGraph() {
+        let funcNameGraph = new Object();
+        for (let edge of this.diagramData.baseEdgeArr) {
+          let name = locateFuncName(this.diagramData.baseNodeArr, edge.to);
+            if (!(name in funcNameGraph)) {
+              funcNameGraph[name] = new Array();
+            }
+            let name2 = locateFuncName(this.diagramData.baseNodeArr, edge.from);
+            funcNameGraph[name].push(name2);
+        }
+
+        for (let node of this.diagramData.baseNodeArr) {
+          if (!(node.name in funcNameGraph)) {
+            funcNameGraph[node.name] = new Array();
+          }
+        }
+        return funcNameGraph;
+    },
+    highlightLines(items, color='red') {
       // let items = obtainHighlightItems(this.vega_view);
       for (let item of items) {
-        item.opacity = 0.5;
+        item.opacity = 1;
+        item.stroke = color;
         this.vega_view.dirty(item);
       }
       // this.vega_view.loader();
@@ -124,8 +174,28 @@ export default {
     highlightLinesByFunc(func_name) {
       let items = obtainHighlightItems(this.vega_view);
       this.clearHighlightLines(items);
-      this.highlightLines(items.filter(item=>(item.datum.Func === func_name)));
+      items = obtainSingleHighlightItems(this.vega_view);
+      this.clearHighlightLines(items);
+
+      // determine if the block is recursive
+      items = obtainHighlightItems(this.vega_view);
+      if (this.funcNameCallerGraph[func_name].includes(func_name)) {
+          this.highlightLines(items.filter(item=>(item.datum.Func === func_name)), 'brown');
+      }
+      else {
+          this.highlightLines(items.filter(item=>(item.datum.Func === func_name)));
+      }
+
+      // highlight the callers and callees.
+      items = obtainSingleHighlightItems(this.vega_view);
+      this.highlightLines(items.filter(item=>(
+            this.funcNameCallerGraph[func_name].includes(item.datum.Func)
+            && item.datum.Func !== func_name)), 'yellow');
+      this.highlightLines(items.filter(item=>(
+            this.funcNameCalleeGraph[func_name].includes(item.datum.Func)
+            && item.datum.Func !== func_name)), 'green');
     },
+    // this one is deprecated.
     highlightLinesByLnum(line_nums) {
       let items = obtainHighlightItems(this.vega_view);
       this.clearHighlightLines(items);

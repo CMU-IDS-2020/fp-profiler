@@ -337,7 +337,7 @@ export default {
 
 
         this.diagram = myDiagram;
-        this.updateModel();
+        // this.updateModel();
 
     },
     methods: {
