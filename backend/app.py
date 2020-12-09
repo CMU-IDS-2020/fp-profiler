@@ -5,6 +5,7 @@ import json
 
 from prof_file_util import load_source, load_line_profile
 from linewise_barchart import linewise_barchart
+from valgrind import extract_valgrind_result
 
 app = Flask(__name__)
 
