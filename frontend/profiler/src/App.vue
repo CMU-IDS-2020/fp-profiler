@@ -22,9 +22,16 @@
         <h6>Select your C code and/or edit the code in the editor: </h6>
         <CodeInput @response="handleResponse"></CodeInput>
       </div>
-      <div v-else>
+      <div v-else-if="!initState && viewType == 'cpu'">
         <h2>Your CPU usage: </h2>
-        <fullButton :modelData="diagramData" ref='goDiagram' style="border: solid 1px black; width:100%; height:400px"></fullButton>
+        <div v-if="hasCallGraph" class="mb-3">
+          <fullButton :modelData="diagramData" ref='goDiagram' style="border: solid 1px black; width:100%; height:400px"></fullButton>
+        </div>
+      </div>
+      <div v-else>
+        <h2>Your Mem usage: </h2>
+      </div>
+      <div v-if="!initState">
         <div id="vis"></div>
       </div>
     </div>
@@ -59,6 +66,8 @@ export default {
   data() {
     return {
       initState: true,
+      viewType: 'cpu',
+      hasCallGraph: false,
       diagramData: {  // passed to <diagram> as its modelData
         fullNodeInfo: [
             {"ID": 0, "name": "main", "selfTime": 0.0, "totalTime": 2.44, "parent": [], "child": [0, 1], "called": 1}, 
@@ -91,35 +100,46 @@ export default {
   },
   methods: {
     moveBack() {
-      console.log("Hello");
       this.initState = true;
     },
     handleResponse(response) {
+      console.log(response);
       this.initState = false;
-      // console.log(response);
       this.response = response.vega_json;
+      this.viewType = response.type;
+      if (response.type == 'cpu') {
+        // refresh the view of graph
+        this.hasCallGraph = true;
+        for (let key of ['fullNodeInfo', 'fullEdgeInfo', 'baseNodeArr', 'baseEdgeArr']) {
+          if (!(key in response)) {
+            this.hasCallGraph = false;
+            break;
+          }
+        }
+        if (this.hasCallGraph) {
+          this.diagramData.fullNodeInfo = response.fullNodeInfo;
+          this.diagramData.fullEdgeInfo = response.fullEdgeInfo;
+          this.diagramData.baseNodeArr = response.baseNodeArr;
+          this.diagramData.baseEdgeArr = response.baseEdgeArr;
+          this.funcNameCallerGraph = this.buildFuncCallerGraph();
+          this.funcNameCalleeGraph = this.buildFuncCalleeGraph();
+          this.diagramData.highlightFunc = this.highlightLinesByFunc.bind(this)
+          vegaEmbed('#vis', this.response).then(({spec, view}) => {
+            this.vega_view = view;
+            console.log(this.$refs);
+            this.$refs['goDiagram'].updateModel();
+          });
+        } else {
+          vegaEmbed('#vis', this.response).then(({spec, view}) => {
+            this.vega_view = view;
+          });
+        }
+      } else {
+        vegaEmbed('#vis', this.response).then(({spec, view}) => {
+          this.vega_view = view;
+        });
+      }
 
-      // refresh the view of graph
-      this.diagramData.fullNodeInfo = response.fullNodeInfo;
-      this.diagramData.fullEdgeInfo = response.fullEdgeInfo;
-      this.diagramData.baseNodeArr = response.baseNodeArr;
-      this.diagramData.baseEdgeArr = response.baseEdgeArr;
-      this.funcNameCallerGraph = this.buildFuncCallerGraph();
-      this.funcNameCalleeGraph = this.buildFuncCalleeGraph();
-      // console.log(this.funcNameCallerGraph);
-      // console.log(this.funcNameCalleeGraph);
-
-      this.diagramData.highlightFunc = this.highlightLinesByFunc.bind(this)
-
-      vegaEmbed('#vis', this.response).then(({spec, view}) => {
-      this.vega_view = view;
-      // console.log(this.vega_view.scenegraph().root)
-      // this.highlightLinesByFunc('access_by_col');
-      // this.highlightLinesByFunc('access_by_row');
-      // this.highlightLinesByLnum([15, 16, 17]);
-      console.log(this.$refs);
-      this.$refs['goDiagram'].updateModel();
-      });
     },
     buildFuncCallerGraph() {
         let funcNameGraph = new Object();
@@ -213,8 +233,8 @@ export default {
 
 <style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
+  /*font-family: Avenir, Helvetica, Arial, sans-serif;*/
+  /*-webkit-font-smoothing: antialiased;*/
   -moz-osx-font-smoothing: grayscale;
   /*text-align: center;*/
   color: #2c3e50;

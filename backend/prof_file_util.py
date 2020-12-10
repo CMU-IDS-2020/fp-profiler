@@ -88,7 +88,10 @@ def load_line_profile(source_file, prof_file):
     })
 
 def load_graph_profile(graph_file):
-    total_edge, index_to_func, func_to_index = extract(graph_file)
+    res = extract(graph_file)
+    if res is None:
+        return None
+    total_edge, index_to_func, func_to_index = res
     node_list, edge_list = sort_node(total_edge, func_to_index, index_to_func)
     return generate_js_input(node_list, edge_list)
     

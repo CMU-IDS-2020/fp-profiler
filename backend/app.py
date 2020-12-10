@@ -78,8 +78,9 @@ def hello():
         '''
         ret_dict['vega_json'] = json.loads(chart.to_json())
         graph_dct = load_graph_profile('graph_file')
-        for k, v in graph_dct.items():
-            ret_dict[k] = v
+        if graph_dct:
+            for k, v in graph_dct.items():
+                ret_dict[k] = v
     else:
         ret_dict['vega_json'] = json.load(open('test.json', 'r'))
     # print(uninitialised_buffer, invalid_write_buffer, mem_leak_dic)
@@ -130,9 +131,9 @@ def mem_profile():
         ret_dict['error_message'] = ''.join(list(open('gcc_output', 'r').readlines()))
         return ret_dict
 
-    os.system('valgrind ./exec > valgrind.txt')
+    os.system('valgrind ./exec > valgrind.txt 2>&1')
     uninitialised_buffer, invalid_write_buffer = extract_valgrind_result('other', 'valgrind.txt')
-    os.system('valgrind --leak-check=full ./exec > valgrind_leak.txt')
+    os.system('valgrind --leak-check=full ./exec > valgrind_leak.txt 2>&1')
     mem_leak_dic = extract_valgrind_result('memory_leak', 'valgrind_leak.txt')
 
 
