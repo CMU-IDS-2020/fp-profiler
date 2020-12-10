@@ -194,7 +194,7 @@ export default {
         }
       }
     },
-    highlightLinesByFunc(func_name) {
+    highlightLinesByFunc(func_name, enable_caller=true) {
       let items = obtainHighlightItems(this.vega_view);
       this.clearHighlightLines(items);
       items = obtainSingleHighlightItems(this.vega_view);
@@ -210,13 +210,15 @@ export default {
       }
 
       // highlight the callers and callees.
-      items = obtainSingleHighlightItems(this.vega_view);
-      this.highlightLines(items.filter(item=>(
+      if (enable_caller) {
+         items = obtainSingleHighlightItems(this.vega_view);
+         this.highlightLines(items.filter(item=>(
             this.funcNameCallerGraph[func_name].includes(item.datum.Func)
             && item.datum.Func !== func_name)), 'yellow');
-      this.highlightLines(items.filter(item=>(
+         this.highlightLines(items.filter(item=>(
             this.funcNameCalleeGraph[func_name].includes(item.datum.Func)
             && item.datum.Func !== func_name)), 'green');
+      }
     },
     // this one is deprecated.
     highlightLinesByLnum(line_nums) {

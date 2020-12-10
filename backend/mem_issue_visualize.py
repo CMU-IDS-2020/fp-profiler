@@ -44,16 +44,18 @@ def mem_issue_visualize(source_path, uninitialised_buffer, invalid_write_buffer,
 
 
     issue_selector = alt.binding_select(options=['uninitialized','invalid write','memleak'])
-    issue_selection = alt.selection_single(fields=['Type'], bind=issue_selector, name='Choose Memory Issue Type: ')
-    
+
+    issue_selection = alt.selection_single(fields=['Type'], bind=issue_selector, name='Choose_Memory_Issue')
+
     rect_plot = alt.Chart(issue_df).mark_rect(color='red').encode(
         alt.X('X:Q', axis=None),
         alt.Y('Y:Q', axis=None),
         alt.X2('X2:Q'),
         alt.Y2('Y2:Q'),
-        alt.Tooltip('Leak Bytes:N', title='Leaked Memory in Bytes')
+        tooltip=[alt.Tooltip('Type:N', title='Memory Issue'),
+                 alt.Tooltip('Line Number:Q', title='At Line'),
+                 alt.Tooltip('Leak Bytes:N', title='Leaked Memory in Bytes'),],
     ).add_selection(issue_selection).transform_filter(issue_selection)
-
     
     return alt.layer(rect_plot, text_plot).properties(width=code_panel_width, height=(len(df) + 1) * line_width)
 
