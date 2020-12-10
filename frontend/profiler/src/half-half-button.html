@@ -251,12 +251,12 @@
                     var namelen = baseNodeArr[i].name.length;
                     console.log(baseNodeArr[i].name, namelen);
                     baseNodeArr[i].width = namelen * 10;
-                    baseNodeArr[i].width += 40;
+                    baseNodeArr[i].width += 20;
                 }
                 /* Legend */
                 var x= -200;
-                var baseY = 150;
-                var ny = 20;
+                var baseY = 100;
+                var ny = 15;
                 var nx = 40
 
                 myDiagram.add(
@@ -271,46 +271,46 @@
                         { font: legendfont, stroke: "black"}))
                 );
                 myDiagram.add(
-                    $(go.Part, {location: new go.Point(x, baseY-30) },
+                    $(go.Part, {location: new go.Point(x, baseY-25) },
                         $(go.Shape, "Rectangle", {fill: "#ea7254", height: ny, width: nx})
                     )
                 );
                 myDiagram.add(
                     $(go.Part,
-                    {location: new go.Point(x+50, baseY-30+3)},
+                    {location: new go.Point(x+50, baseY-25+3)},
                     $(go.TextBlock, "20-40%", 
                         { font: legendfont, stroke: "black"}))
                 );
                 myDiagram.add(
-                    $(go.Part, {location: new go.Point(x, baseY-60) },
+                    $(go.Part, {location: new go.Point(x, baseY-50) },
                         $(go.Shape, "Rectangle", {fill: "#dc4a38", height: ny, width: nx})
                     )
                 );
                 myDiagram.add(
                     $(go.Part,
-                    {location: new go.Point(x+50, baseY-60+3)},
+                    {location: new go.Point(x+50, baseY-50+3)},
                     $(go.TextBlock, "40-60%", 
                         { font: legendfont, stroke: "black"}))
                 );
                 myDiagram.add(
-                    $(go.Part, {location: new go.Point(x, baseY-90) },
+                    $(go.Part, {location: new go.Point(x, baseY-75) },
                         $(go.Shape, "Rectangle", {fill: "#bb2f29", height: ny, width: nx})
                     )
                 );
                 myDiagram.add(
                     $(go.Part,
-                    {location: new go.Point(x+50, baseY-90+3)},
+                    {location: new go.Point(x+50, baseY-75+3)},
                     $(go.TextBlock, "60-80%", 
                         { font: legendfont, stroke: "black"}))
                 );
                 myDiagram.add(
-                    $(go.Part, {location: new go.Point(x, baseY-120) },
+                    $(go.Part, {location: new go.Point(x, baseY-100) },
                         $(go.Shape, "Rectangle", {fill: "#8c1a18", height: ny, width: nx})
                     )
                 );
                 myDiagram.add(
                     $(go.Part,
-                    {location: new go.Point(x+50, baseY-120+3)},
+                    {location: new go.Point(x+50, baseY-100+3)},
                     $(go.TextBlock, ">80%", 
                         { font: legendfont, stroke: "black"}))
                 );
@@ -318,31 +318,31 @@
 
                 myDiagram.add(
                     $(go.Part,
-                    {location: new go.Point(x-20, baseY-150)},
+                    {location: new go.Point(x-20, baseY-125)},
                     $(go.TextBlock, "Run-time Percent",
                     {font: titlefont, stroke: "black"})
                     )
                 );
 
                 myDiagram.add(
-                    $(go.Part, {location: new go.Point(x-10, baseY + 60)},
+                    $(go.Part, {location: new go.Point(x-10, baseY + 40)},
                         $(go.Shape, "RoundedTopRectangle", {fill: "#8c1a18", height: ny, width: nx+20})
                     )
                 )
                 myDiagram.add(
                     $(go.Part,
-                    {location: new go.Point(x+55, baseY + 65)},
+                    {location: new go.Point(x+55, baseY + 40)},
                     $(go.TextBlock, "Total time", 
                         { font: legendfont, stroke: "black"}))
                 );
                 myDiagram.add(
-                    $(go.Part, {location: new go.Point(x-10, baseY + 80)},
+                    $(go.Part, {location: new go.Point(x-10, baseY + 55)},
                         $(go.Shape, "RoundedBottomRectangle", {fill: "#ee9779", height: ny+10, width: nx+20})
                     )
                 );
                 myDiagram.add(
                     $(go.Part,
-                    {location: new go.Point(x+55, baseY + 90)},
+                    {location: new go.Point(x+55, baseY + 65)},
                     $(go.TextBlock, "Self time", 
                         { font: legendfont, stroke: "black"}))
                 );
@@ -386,7 +386,7 @@
                             baseNodeArr[i].timePct = baseNodeArr[i].time / graphTotalTime;
                             baseNodeArr[i].selfColor = this.find_color(baseNodeArr[i].timePct);
                             baseNodeArr[i].color = this.find_color(fullNodeInfo[i].totalTime / graphTotalTime);
-                            baseNodeArr[i].nodeInfoSelf = "Self time: " + fullNodeInfo[i].selfTime.toFixed(2) + "s\n";
+                            baseNodeArr[i].nodeInfoSelf = "Self time: " + baseNodeArr[i].time.toFixed(2) + "s\n";
                             baseNodeArr[i].nodeInfoWhole = "Total time: " +  fullNodeInfo[i].totalTime.toFixed(2) + "s\n";
                             var called= "Called: " + fullNodeInfo[i].called + " times";
                             if (fullNodeInfo[i].selfcalled)
