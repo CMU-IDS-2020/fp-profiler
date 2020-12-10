@@ -135,7 +135,7 @@ export default {
                         opacity: 1
                     },
                     new go.Binding("text", "name").makeTwoWay()),
-                    new go.Binding("opacity", "ifShow"),
+                    new go.Binding("opacity", "ifShow", function(val) {return val-0.1;}),
                     { // show the Adornment when a mouseHover event occurs
                         mouseHover: function(e, obj) {
                             var node = obj.part;
