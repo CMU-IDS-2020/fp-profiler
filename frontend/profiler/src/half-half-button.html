@@ -136,7 +136,7 @@
                                     // { desiredSize: NodeInfoSize },
                                         {
                                             fill: "white",
-                                            height: nodeHeight/2,
+                                            height: nodeHeight/2 - 11,
                                             width: 200-1,
                                             opacity: 1
                                         },
@@ -161,11 +161,11 @@
                                 ),
                                 $(go.Panel, "Auto",
                                     // { desiredSize: NodeInfoSize },
-                                    { position: new go.Point(0, nodeHeight/2 - 1) },
+                                    { position: new go.Point(0, nodeHeight/2 - 10) },
                                     $(go.Shape, "RoundedBottomRectangle",
                                     {
                                         fill: "white",
-                                        height: nodeHeight/2,
+                                        height: nodeHeight/2+ 9,
                                         width: 200-1,
                                         opacity: 1
                                     },
@@ -186,19 +186,25 @@
                                             //segmentOrientation: go.Link.
                                         },
                                         new go.Binding('text', 'nodeInfoSelf')))
-                                    }
+                                    },
+                                    $(go.TextBlock, "Function",
+                                        {
+                                            margin: 12,
+                                            font: smallfont,
+                                            editable: false,
+                                            textAlign: 'center',
+                                            opacity: 1
+                                        },
+                                        new go.Binding("text", "name").makeTwoWay(),
+                                        new go.Binding("opacity", "ifShow", function(val) {
+                                            if (val == 1)
+                                                return 1;
+                                            else
+                                                return val- 0.05;
+                                        }))
                                 ),
                         ),
-                        $(go.TextBlock, "Function",
-                            {
-                                margin: 12,
-                                font: smallfont,
-                                editable: false,
-                                textAlign: 'center',
-                                opacity: 1
-                            },
-                            new go.Binding("text", "name").makeTwoWay(),
-                            new go.Binding("opacity", "ifShow"))
+
                     );
                                 
             
@@ -320,7 +326,7 @@
 
                 myDiagram.add(
                     $(go.Part, {location: new go.Point(x-10, baseY + 60)},
-                        $(go.Shape, "RoundedTopRectangle", {fill: "#8c1a18", height: ny+5, width: nx+20})
+                        $(go.Shape, "RoundedTopRectangle", {fill: "#8c1a18", height: ny, width: nx+20})
                     )
                 )
                 myDiagram.add(
@@ -330,8 +336,8 @@
                         { font: legendfont, stroke: "black"}))
                 );
                 myDiagram.add(
-                    $(go.Part, {location: new go.Point(x-10, baseY + 85)},
-                        $(go.Shape, "RoundedBottomRectangle", {fill: "#ee9779", height: ny+5, width: nx+20})
+                    $(go.Part, {location: new go.Point(x-10, baseY + 80)},
+                        $(go.Shape, "RoundedBottomRectangle", {fill: "#ee9779", height: ny+10, width: nx+20})
                     )
                 );
                 myDiagram.add(
@@ -390,7 +396,9 @@
                             baseNodeArr[i].ifShow = 1;
                         }
                         else {
-                            baseNodeArr[i].ifShow = 0.2;
+                            baseNodeArr[i].color = "gray";
+                            baseNodeArr[i].selfColor = "gray";
+                            baseNodeArr[i].ifShow = 0.15;
                             baseNodeArr[i].nodeInfoSelf = "";
                             baseNodeArr[i].nodeInfoWhole = "";
                         }
@@ -413,7 +421,7 @@
                             baseEdgeArr[i].ifShow = 1;
                         }
                         else {
-                            baseEdgeArr[i].ifShow = 0.2;
+                            baseEdgeArr[i].ifShow = 0.15;
                             baseEdgeArr[i].calledInfo = "";
                         } 
                         drawEdgeArr.push(baseEdgeArr[i]);
@@ -714,34 +722,38 @@
             data: {
                 diagramData: {  // passed to <diagram> as its modelData
                     fullNodeInfo: [
-                        {"ID": 0, "name": "main", "selfTime": 0.0, "totalTime": 3.65, "parent": [], "child": [0], "called": 1}, 
-                        {"ID": 1, "name": "do_task", "selfTime": 0.0, "totalTime": 3.65, "parent": [0], "child": [1, 2, 3], "called": 1}, 
-                        {"ID": 2, "name": "access_by_col", "selfTime": 2.93, "totalTime": 2.93, "parent": [1], "child": [], "called": 102400}, 
-                        {"ID": 3, "name": "recursive_factorial", "selfTime": 0.39, "totalTime": 0.39, "parent": [2, 4], "child": [4], "called": 102400}, 
-                        {"ID": 4, "name": "access_by_row", "selfTime": 0.33, "totalTime": 0.33, "parent": [3], "child": [], "called": 102400}],
+                        {"ID": 0, "name": "main", "selfTime": 0, "totalTime": 1.4, "parent": [], "child":[0,1], "called":1}, 
+                        {"ID": 1, "name": "bigTaskA", "selfTime": 0, "totalTime": 0.4, "parent": [0],"child":[2], "called":1},
+                        {"ID": 2, "name": "bigTaskB", "selfTime": 0, "totalTime": 1.0, "parent": [1],"child":[3,4], "called":2},
+                        {"ID": 3, "name": "helpTaskC", "selfTime": 0.6, "totalTime": 1.2, "parent": [2,3],"child":[5,6], "called":6, "selfcalled":6},
+                        {"ID": 4, "name": "helpTaskD", "selfTime": 0.8, "totalTime": 0.8, "parent": [4,6],"child":[], "called":8}],
 
                     baseNodeArr: [
-                        {"key": 0, "name": "main", "time": 0.0, "isExpanded": true, "percent": 1, "hide": false, "timePct": 0.0}, 
-                        {"key": 1, "name": "do_task", "time": 0.0, "isExpanded": true, "percent": 1, "hide": false, "timePct": 0.0}, 
-                        {"key": 2, "name": "access_by_col", "time": 2.93, "isExpanded": true, "percent": 1, "hide": false, "timePct": 0.8027397260273973}, 
-                        {"key": 3, "name": "recursive_factorial", "time": 0.39, "isExpanded": true, "percent": 1, "hide": false, "timePct": 0.10684931506849316}, 
-                        {"key": 4, "name": "access_by_row", "time": 0.33, "isExpanded": true, "percent": 1, "hide": false, "timePct": 0.09041095890410959}],
+                        {"key":0, "name":"main", "time":0, "isExpanded": true, "percent":1, "hide":false, "timePct":0, "color":"#ee9779"},
+                        {"key":1, "name":"bigTaskA", "time":0, "isExpanded": true, "percent":1, "hide":false, "timePct":0, "color":"#ee9779"},
+                        {"key":2, "name":"bigTaskB", "time":0, "isExpanded": true, "percent":1, "hide":false, "timePct":0, "color":"#ee9779"},
+                        {"key":3, "name":"helpTaskC", "time":0.6, "isExpanded": true, "percent":1, "hide":false, "timePct":3/7, "color":"#dc4a38"},
+                        {"key":4, "name":"helpTaskD", "time":0.8, "isExpanded": true, "percent":1, "hide":false, "timePct":4/7, "color":"#dc4a38"}],
         
 
                     fullEdgeInfo: [
-                        {"from": 0, "to": 1, "called": 1, "time": 3.65, "cTime": 0.0, "gcTime": 3.65}, 
-                        {"from": 1, "to": 2, "called": 102400, "time": 2.93, "cTime": 2.93, "gcTime": 0.0}, 
-                        {"from": 1, "to": 3, "called": 102400, "time": 0.39, "cTime": 0.39, "gcTime": 0.0}, 
-                        {"from": 1, "to": 4, "called": 102400, "time": 0.33, "cTime": 0.33, "gcTime": 0.0}, 
-                        {"from": 3, "to": 3, "called": 104755200, "time": 0.78, "cTime": 0.39, "gcTime": 0.39}
+                        {"from":0, "to":1, "called":1, "time":0.4, "cTime":0, "gcTime":0.4},
+                        {"from":0, "to":2, "called":2, "time":1.0, "cTime":0, "gcTime":1.0},
+                        {"from":1, "to":3, "called":2, "time":0.4, "cTime":0.2, "gcTime":0.2},
+                        {"from":2, "to":3, "called":4, "time":0.8, "cTime":0.4, "gcTime":0.4},
+                        {"from":2, "to":4, "called":2, "time":0.2, "cTime":0.2, "gcTime":0},
+                        {"from":3, "to":3, "called":6, "time":0, "cTime":0, "gcTime":0},
+                        {"from":3, "to":4, "called":6, "time":0.6, "cTime":0.6, "gcTime":0}
                     ],
 
                     baseEdgeArr:[
-                        {"from": 0, "to": 1, "validcalled": 1, "validTime": 3.65, "validCTime": 0.0, "validGcTime": 3.65, "hide": false}, 
-                        {"from": 1, "to": 2, "validcalled": 102400, "validTime": 2.93, "validCTime": 2.93, "validGcTime": 0.0, "hide": false}, 
-                        {"from": 1, "to": 3, "validcalled": 102400, "validTime": 0.39, "validCTime": 0.39, "validGcTime": 0.0, "hide": false}, 
-                        {"from": 1, "to": 4, "validcalled": 102400, "validTime": 0.33, "validCTime": 0.33, "validGcTime": 0.0, "hide": false}, 
-                        {"from": 3, "to": 3, "validcalled": 104755200, "validTime": 0.78, "validCTime": 0.39, "validGcTime": 0.39, "hide": false}
+                        {"from":0, "to":1, "validcalled":1, "validTime":0.4, "validCTime":0, "validGcTime":0.4,  "hide":false},
+                        {"from":0, "to":2, "validcalled":2, "validTime":1.0, "validCTime":0, "validGcTime":1.0, "hide":false},
+                        {"from":1, "to":3, "validcalled":2, "validTime":0.4, "validCTime":0.2, "validGcTime":0.2, "hide":false},
+                        {"from":2, "to":3, "validcalled":4, "validTime":0.8, "validCTime":0.4, "validGcTime":0.4, "hide":false},
+                        {"from":2, "to":4, "validcalled":2, "validTime":0.2, "validCTime":0.2, "validGcTime":0, "hide":false},
+                        {"from":3, "to":3, "validcalled":6, "validTime":0, "validCTime":0, "validGcTime":0, "hide":false},
+                        {"from":3, "to":4, "validcalled":6, "validTime":0.6, "validCTime":0.6, "validGcTime":0, "hide":false}
                     ]
                 },
                 currentNode: null
