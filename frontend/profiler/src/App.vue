@@ -19,7 +19,6 @@
 
     <div class="container">
       <div v-if="initState" >
-        <h6>Select your C code and/or edit the code in the editor: </h6>
         <CodeInput @response="handleResponse"></CodeInput>
       </div>
       <div v-else-if="!initState && viewType == 'cpu'">

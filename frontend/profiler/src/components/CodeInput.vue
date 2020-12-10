@@ -18,6 +18,8 @@
       </div>
     </div>
 
+    <h6>Select your C code and/or edit the code in the editor: </h6>
+
     <div class="row mb-3">
       <form class="col-6" id="upload-file" method="post" enctype="multipart/form-data">
         <div class="custom-file">
@@ -72,7 +74,7 @@ export default {
       fr.onload = () => { 
         this.editor.setValue(fr.result); 
       }
-      fr.readAsText(this.file); 
+      fr.readAsText(this.file);
     },
     uploadFile() {
       this.waiting = true;
