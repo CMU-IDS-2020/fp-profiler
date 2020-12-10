@@ -155,7 +155,8 @@ export default {
                             segmentOffset: new go.Point(0, 0),
                             //segmentOrientation: go.Link.
                         },
-                        new go.Binding('text', 'text'))
+                        new go.Binding('text', 'text')),
+                        new go.Binding('stroke', 'color')
                     )
                 }
             );
@@ -313,6 +314,7 @@ export default {
                     baseNodeArr[i].ifShow = 1;
                 }
                 else {
+                    baseNodeArr[i].color = "gray";
                     baseNodeArr[i].ifShow = 0.2;
                     baseNodeArr[i].text = "";
                 }
@@ -333,8 +335,10 @@ export default {
                         baseEdgeArr[i].calledInfo += " (" + baseEdgeArr[i].validTime.toFixed(2) + "s" + ")";
                     baseEdgeArr[i].ewidth = (maxEdgeWidth - minEdgeWidth) * (baseEdgeArr[i].validTime / graphTotalTime) + minEdgeWidth;
                     baseEdgeArr[i].ifShow = 1;
+                    baseEdgeArr[i].color = "#2F4F4F";
                 } 
                 else {
+                    baseEdgeArr[i].color = "gray";
                     baseEdgeArr[i].ifShow = 0.2;
                     baseEdgeArr[i].calledInfo = "";
                 }
