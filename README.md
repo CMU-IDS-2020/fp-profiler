@@ -12,13 +12,24 @@
 
 ![Summary image](summary.gif)
 
+## Abstract 
+
+Programmers need to keep track of their programs' well-being and optimize the performance of their codes. Profilers are useful tools for experienced programmers to detect CPU bottlenecks and memory errors, but beginners may find it difficult both to use these tools and to interpret the raw text outputs of these tools. In this project, we build a user-friendly visualization for new programmers to conduct both CPU and memory analysis. 
+
+There are three major components and all are highly interactive and easy to read. 
+* **Call graph** gives users an overview of the program's structure and also supports free exploration into a small group of functions through expanding and collapsing operations. 
+* **CPU linewise panel** allows users to detect in detail which lines of the code consumes most time. 
+* **Memory linewise panel** enables users to detect possible memory bugs in each line of codes. 
+  
+Our application is lightweight and end-to-end. Users can spare the trouble of installing profiling tools, calling profilers and interpreting raw text outputs. All they need to do is to upload their codes or input through the editor. 
+
 ## Work distribution
 
-Haonan Wang:
+Haonan Wang: Memory line-wise visualization and call graph interactive design.
 
-Weiyi Zhang:
+Weiyi Zhang: Call graph visualization and interactive design.
 
-Lichen Jin:
+Lichen Jin: CPU line-wise visualization and different components intergration.
 
 Yijie Zhang: Front-end setup, user interface design and implementation.
 
