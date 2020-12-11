@@ -9,6 +9,7 @@
   * yijiez2@andrew.cmu.edu
 * **Track**: Interactive Visualization/Application
 * **Video**: [here](https://drive.google.com/file/d/1HSFbZOKvZXDsIAktT9s-t5HH797ZDeJY/view?usp=sharing)
+* **Report**: [here](https://github.com/CMU-IDS-2020/fp-profiler/blob/main/Report.pdf)
 
 ![Summary image](summary.gif)
 
