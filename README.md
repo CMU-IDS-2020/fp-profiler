@@ -1,7 +1,7 @@
 # CMU Interactive Data Science Final Project
 
 * **Title**: Profiler
-* **Online URL**: TODO
+* **Online URL**: https://cmu-ids-2020.github.io/fp-profiler/ (Static demo without real back-end and call-graph. Try it locally to see full functionality.)
 * **Team members**:
   * Contact person: haonanw@andrew.cmu.edu
   * weiyizha@andrew.cmu.edu
