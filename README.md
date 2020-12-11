@@ -21,7 +21,7 @@ There are three major components and all are highly interactive and easy to read
 * **CPU linewise panel** allows users to detect in detail which lines of the code consumes most time. 
 * **Memory linewise panel** enables users to detect possible memory bugs in each line of codes. 
   
-Our application is lightweight and end-to-end. Users can spare the trouble of calling profilers and interpreting raw text outputs. All they need to do is to upload their codes or input through the editor. 
+Our application is lightweight and end-to-end. Users can spare the trouble of installing profiling tools, calling profilers and interpreting raw text outputs. All they need to do is to upload their codes or input through the editor. 
 
 ## Work distribution
 
