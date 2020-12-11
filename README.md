@@ -29,7 +29,7 @@ Haonan Wang: Memory line-wise visualization and call graph interactive design.
 
 Weiyi Zhang: Call graph visualization and interactive design.
 
-Lichen Jin: CPU line-wise visualization and different components intergration.
+Lichen Jin: CPU line-wise visualization, graph-line coordination, and the intergration.
 
 Yijie Zhang: Front-end setup, user interface design and implementation.
 
