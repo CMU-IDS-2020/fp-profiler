@@ -15,6 +15,7 @@ def code_line_visualize(df, line_width=20.0, code_panel_width=500.0):
     df['Y'] = (len(df) - df['Line Number'] + 1) * line_width
     df['X'] = code_panel_width
     df['X2'] = 0.0
+    df['X3'] = line_width / 2
     df['Y2'] = (len(df) - df['Line Number']) * line_width
     df['Y_mid'] = (df['Y'] + df['Y2']) / 2.0
     
@@ -65,7 +66,7 @@ def code_line_visualize(df, line_width=20.0, code_panel_width=500.0):
     )
     
     text_plot = alt.Chart(df).mark_text(align='left', size=line_width * 0.8).encode(
-        alt.X('X2:Q', axis=None),
+        alt.X('X3:Q', axis=None),
         alt.Y('Y_mid:Q', axis=None),
         alt.Text('Source'),
         tooltip=[
