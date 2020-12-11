@@ -20,11 +20,11 @@ There are three major components. Call graph gives users an overview of the prog
 
 ## Work distribution
 
-Haonan Wang: Memory line-wise visualization and call graph interactive design
+Haonan Wang: Memory line-wise visualization and call graph interactive design.
 
-Weiyi Zhang: Call graph visualization and interactive design
+Weiyi Zhang: Call graph visualization and interactive design.
 
-Lichen Jin:
+Lichen Jin: CPU line-wise visualization and different components intergration.
 
 Yijie Zhang: Front-end setup, user interface design and implementation.
 
