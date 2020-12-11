@@ -1,9 +1,18 @@
 .DS_Store
-node_modules
 /frontend/profiler/dist
 /frontend/profiler/node_modules
 /backend/temp
 /backend/__pycache__
+/backend/ctags_output
+/backend/exec
+/backend/gcc_output
+/backend/gmon.out
+/backend/graph_file
+/backend/linewise_file
+/backend/prog
+/backend/temp.c
+/backend/valgrind.txt
+/backend/valgrind_leak.txt
 
 # dependencies
 /deps/
