@@ -60,17 +60,17 @@ Dependencies for back-end: Python, Flask, Pandas, Altair, binutils, valgrind.
 
 Dependencies for front-end: Node.js and JavaScript libraries defined in frontend/profiler/package.json.
 
-We provide `linux-build.sh` for setting up the development environment on Linux.
+`linux-build.sh` contains the steps for setting up the development environment on Linux.
 
 ### Start front-end/back-end
 
-The project consists of one back-end and one front-end. You can start a back-end under `backend/` with the following command:
+The project consists of one back-end and one front-end. You can start the back-end under `backend/` with the following command:
 ```
 flask run
 ```
 This will start a dev server for back-end at localhost:5000.
 
-You can start a front-end under `frontend/profiler/` with the following command:
+You can start the front-end under `frontend/profiler/` with the following command:
 ```
 npm install # install all dependencies locally
 npm run serve
