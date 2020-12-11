@@ -1,12 +1,16 @@
 # CMU Interactive Data Science Final Project
 
+* **Title**: Profiler
 * **Online URL**: TODO
 * **Team members**:
   * Contact person: haonanw@andrew.cmu.edu
   * weiyizha@andrew.cmu.edu
   * lichenj@andrew.cmu.edu
   * yijiez2@andrew.cmu.edu
-* **Track**: Interactive Visualization/Application (one of Narrative, Model, or Interactive Visualization/Application)
+* **Track**: Interactive Visualization/Application
+* **Video**: [here](https://drive.google.com/file/d/1HSFbZOKvZXDsIAktT9s-t5HH797ZDeJY/view?usp=sharing)
+
+![Summary image](summary.gif)
 
 ## Work distribution
 
@@ -33,6 +37,6 @@ UI
 ### Final deliverables
 
 - [x] All code for the project should be in the repo.
-- [ ] A 5 minute video demonstration.
+- [x] A 5 minute video demonstration.
 - [x] Update Readme according to Canvas instructions.
 - [ ] A detailed project report. The contact should submit the video and report as a PDF on Canvas.
