@@ -54,6 +54,12 @@ Yijie Zhang: Front-end setup, user interface design and implementation.
 
 ### Project setup
 
+Dependency for back-end: Python, Pandas, Altair, binutils, valgrind.
+
+Dependency for front-end: Node.js.
+
+We provide `linux-build.sh` for setting up the development environment on Linux.
+
 The project consists of one back-end and one front-end. You can start a back-end under `backend/` with the following command:
 ```
 flask run
@@ -67,3 +73,4 @@ npm run serve
 ```
 This will start a dev server for this application (front-end) at localhost:8080.
 
+We also provide `run.sh` which will start the back-end and front-end together.
