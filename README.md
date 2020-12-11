@@ -52,13 +52,17 @@ Yijie Zhang: Front-end setup, user interface design and implementation.
 - [x] Update Readme according to Canvas instructions.
 - [x] A detailed project report. The contact should submit the video and report as a PDF on Canvas.
 
-### Project setup
+## Project setup
 
-Dependency for back-end: Python, Pandas, Altair, binutils, valgrind.
+### Dependencies
+
+Dependency for back-end: Python, Flask, Pandas, Altair, binutils, valgrind.
 
 Dependency for front-end: Node.js.
 
 We provide `linux-build.sh` for setting up the development environment on Linux.
+
+### Start front-end/back-end
 
 The project consists of one back-end and one front-end. You can start a back-end under `backend/` with the following command:
 ```
@@ -71,6 +75,6 @@ You can start a front-end under `frontend/profiler/` with the following command:
 npm install # install all dependencies locally
 npm run serve
 ```
-This will start a dev server for this application (front-end) at localhost:8080.
+This will start a dev server for the application (front-end) at localhost:8080.
 
-We also provide `run.sh` which will start the back-end and front-end together.
+We provide `run.sh` which can start the back-end and front-end together.
