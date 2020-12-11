@@ -56,9 +56,9 @@ Yijie Zhang: Front-end setup, user interface design and implementation.
 
 ### Dependencies
 
-Dependency for back-end: Python, Flask, Pandas, Altair, binutils, valgrind.
+Dependencies for back-end: Python, Flask, Pandas, Altair, binutils, valgrind.
 
-Dependency for front-end: Node.js.
+Dependencies for front-end: Node.js and JavaScript libraries defined in frontend/profiler/package.json.
 
 We provide `linux-build.sh` for setting up the development environment on Linux.
 
