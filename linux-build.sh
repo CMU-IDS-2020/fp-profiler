@@ -8,7 +8,8 @@ sudo apt install gcc binutils clang-format python3 python3-pip make \
     libseccomp-dev \
     libjansson-dev \
     libyaml-dev \
-    libxml2-dev
+    libxml2-dev \
+    valgrind
 
 sudo pip3 install pandas altair streamlit flask
 
