@@ -45,7 +45,7 @@ def mem_issue_visualize(source_path, uninitialised_buffer, invalid_write_buffer,
 
     issue_selector = alt.binding_select(options=['uninitialized','invalid write','memleak'])
 
-    issue_selection = alt.selection_single(fields=['Type'], bind=issue_selector, name='Choose_Memory_Issue')
+    issue_selection = alt.selection_single(fields=['Type'], bind=issue_selector, init={'Type': 'uninitialized'}, name='Choose_Memory_Issue')
 
     rect_plot = alt.Chart(issue_df).mark_rect(color='red').encode(
         alt.X('X:Q', axis=None),
